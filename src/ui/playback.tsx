@@ -6,24 +6,27 @@ import { ComponentType } from "../util/types";
 
 import './playback.css';
 
+export type DisplayState = 'initial' | 'final' | number;
+
 export function PlaybackBoard({
     initialBoard,
     swaps,
-    displayedSwapIdx
+    displayedState
 }: {
     initialBoard: Board<Card | null>,
     swaps: Array<Swap>,
-    displayedSwapIdx: number | null
+    displayedState: DisplayState
 }) {
-    if (displayedSwapIdx !== null && displayedSwapIdx >= swaps.length)
+    if (typeof displayedState === 'number' && (displayedState < 0 || displayedState >= swaps.length))
         throw new Error("displayed swap index is out of bounds");
 
     function getBoardAtSwap(
         initialBoard: Board<Card | null>,
         swaps: Array<Swap>,
-        displayedSwapIdx: number | null
+        displayedState: DisplayState,
     ): Board<Card | null> {
         const board = structuredClone(initialBoard);
+        if (displayedState == 'initial') return board;
 
         function performSwap(swapIdx: number) {
             const swap = swaps[swapIdx];
@@ -35,7 +38,14 @@ export function PlaybackBoard({
             board[swap.to.row][swap.to.column] = fromCard;
         }
 
-        for (let swapIdx = 0; swapIdx < (displayedSwapIdx ?? 0); swapIdx++) {
+        const displayedSwapIdx = typeof displayedState === 'number'
+            ? displayedState
+            : (() => {
+                const assertStateIsFinal: 'final' = displayedState;
+                return swaps.length;
+            })();
+        
+        for (let swapIdx = 0; swapIdx < displayedSwapIdx; swapIdx++) {
             performSwap(swapIdx);
         }
 
@@ -44,12 +54,12 @@ export function PlaybackBoard({
 
     function getHighlightsAtSwap(
         swaps: Array<Swap>,
-        displayedSwapIdx: number | null
+        displayedState: DisplayState,
     ): Array<Highlight> {
-        if (displayedSwapIdx === null)
+        if (displayedState === 'initial' || displayedState === 'final')
             return [];
 
-        const swap = swaps[displayedSwapIdx];
+        const swap = swaps[displayedState];
 
         return [{
             spot: swap.from,
@@ -61,12 +71,12 @@ export function PlaybackBoard({
     }
 
     const board = React.useMemo(() => {
-        return getBoardAtSwap(initialBoard, swaps, displayedSwapIdx);
-    }, [initialBoard, swaps, displayedSwapIdx]);
+        return getBoardAtSwap(initialBoard, swaps, displayedState);
+    }, [initialBoard, swaps, displayedState]);
 
     const highlights = React.useMemo(() => {
-        return getHighlightsAtSwap(swaps, displayedSwapIdx);
-    }, [swaps, displayedSwapIdx]);
+        return getHighlightsAtSwap(swaps, displayedState);
+    }, [swaps, displayedState]);
 
     return <HighlightedBoard
         state={board}
