@@ -45,10 +45,6 @@ main {
   max-height: 100vh;
 }
 
-main > div {
-  flex-grow: 1;
-}
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

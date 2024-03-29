@@ -1,12 +1,10 @@
 .card-area {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-content: center;
-    gap: 1rem;
-
     flex-grow: 1;
 
+    display: flex;
+    flex-direction: column;
     align-items: flex-start;
+
     overflow-x: scroll;
+    gap: 1rem;
 }
