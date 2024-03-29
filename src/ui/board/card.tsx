@@ -47,7 +47,7 @@ export function CardTile({
         const imageSrc = getImagePathForCard(spotState.card);
         const altText = getAltTextForCard(spotState.card);
 
-        return <img src={imageSrc} alt={altText} />;
+        return <img className={classes.join(" ")} src={imageSrc} alt={altText} />;
     })();
 
     return imageElement ?? <div />;
