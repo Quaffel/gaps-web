@@ -18,7 +18,7 @@ export function Board({
     rows: Array<Row<CardSpotState>>,
     onCardSelect?: (card: Card | null, row: number, column: number) => void
 }): JSX.Element {
-    return <div className="card-area">
+    return <div className="board">
         {rows.map((it, rowIdx) => <CardRow
             cards={it}
             onCardSelect={(card, columnIdx) => onCardSelect?.(card, rowIdx, columnIdx)} />)}
