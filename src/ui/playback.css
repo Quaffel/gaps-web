@@ -1,0 +1,38 @@
+.playback-controls-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 2rem;
+
+    margin-block: 2rem;
+}
+
+.playback-controls-bar button {
+    width: 5rem;
+    height: 5rem;
+
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid black;
+
+    box-shadow: 8px 11px 15px -4px rgba(0, 0, 0, 0.58);
+
+    object-fit: contain;
+
+    margin-right: 2px;
+    margin-bottom: 2px;
+}
+
+.playback-controls-bar button:active:not(:disabled) {
+    margin-top: 2px;
+    margin-left: 2px;
+    margin-right: 0;
+    margin-bottom: 0;
+
+    box-shadow: 8px 11px 15px -4px rgba(0, 0, 0, 0.20);
+}
+
+.playback-controls-bar button:disabled {
+    background-color: lightgray;
+}
