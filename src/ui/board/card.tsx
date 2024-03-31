@@ -20,7 +20,7 @@ function getAltTextForCard(card: Card | null): string {
 
 export interface CardSpotState {
     card: Card | null,
-    highlight: 'selection' | 'candidate' | 'none'
+    highlight: 'selection' | 'candidate' | 'none',
 }
 
 export function CardTile({
@@ -47,12 +47,10 @@ export function CardTile({
         const imageSrc = getImagePathForCard(spotState.card);
         const altText = getAltTextForCard(spotState.card);
 
-        return <img className={classes.join(" ")} src={imageSrc} alt={altText} />;
+        return <img src={imageSrc} alt={altText} />;
     })();
 
-    return imageElement ?? <div />;
-    /*
     return <div className={classes.join(" ")} onClick={() => onSelect?.()}>
         {imageElement}
-    </div>*/
+    </div>
 }
