@@ -1,26 +1,24 @@
-import { Card } from "../cards";
+import { Rank, Suit } from "../cards";
 import { ComponentType } from "../util/types";
 
-export const IconValues = [
-    'play', 'pause',
-    'fast-forward', 'rewind',
-    'skip-forward', 'skip-back',
-    'back',
-    'disc',
-    'star', 'github',
-] as const;
+type CardResource = `cards/${Rank}_of_${Suit}` | 'cards/back';
 
-export type Icon = ComponentType<typeof IconValues>;
+namespace FeatherIcons {
+    export const VariantValues = [
+        'play', 'pause',
+        'fast-forward', 'rewind',
+        'skip-forward', 'skip-back',
+        'disc',
+        'star', 'github',
+    ] as const;
 
-export function getImagePathForIcon(icon: Icon): string {
-    return `./res/icons/${icon}.svg`;
+    export type Variants = ComponentType<typeof VariantValues>;
 }
 
-export function getImagePathForCard(card: Card | null): string {
-    const basePath = './res/cards';
-    if (card === null) {
-        return `${basePath}/back.svg`;
-    }
+type FeatherIconResource = `icon-feather/${FeatherIcons.Variants}`;
 
-    return `${basePath}/${card.rank}_of_${card.suit}.svg`
+export type Resource = CardResource | FeatherIconResource;
+
+export function getResourcePath(resource: Resource) {
+    return `./res/${resource}.svg`;
 }

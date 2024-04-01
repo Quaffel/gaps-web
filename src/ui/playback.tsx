@@ -4,8 +4,9 @@ import { Board, Highlight, HighlightedBoard } from "./board/board";
 import { Swap } from "./game";
 import { ComponentType } from "../util/types";
 
+import { Resource, getResourcePath } from "./resources";
+
 import './playback.css';
-import { getImagePathForIcon } from "./resources";
 
 export type DisplayState = 'initial' | 'final' | number;
 
@@ -100,11 +101,14 @@ export function PlaybackControlsBar({
 }: {
     controls: Array<PlaybackControl>
 }) {
+    function getActionIcon(action: Action): string {
+        return getResourcePath(`icon-feather/${action}`);
+    }
 
     return <div className="playback-controls-bar">
         {controls.map(it => {
             return <button disabled={!it.enabled} onClick={() => it.onAction?.()}>
-                <img src={getImagePathForIcon(it.action)} />
+                <img src={getActionIcon(it.action)} />
             </button>;
         })}
     </div>

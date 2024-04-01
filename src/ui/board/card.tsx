@@ -1,5 +1,5 @@
 import { Card } from "../../cards"
-import { getImagePathForCard } from "../resources";
+import { Resource, getResourcePath } from "../resources";
 import './card.css';
 
 function getAltTextForCard(card: Card | null): string {
@@ -22,6 +22,11 @@ export function CardTile({
     spotState: CardSpotState,
     onSelect?: () => void
 }): JSX.Element {
+    function getCardResource(card: Card | null): string {
+        const cardPath = card === null ? 'cards/back' as const : `cards/${card.rank}_of_${card.suit}` as const;
+        return getResourcePath(cardPath);
+    }
+
     let classes = ["card"]
 
     const highlightClass = {
@@ -36,7 +41,7 @@ export function CardTile({
     }
 
     const imageElement = (() => {
-        const imageSrc = getImagePathForCard(spotState.card);
+        const imageSrc = getCardResource(spotState.card);
         const altText = getAltTextForCard(spotState.card);
 
         return <img src={imageSrc} alt={altText} />;
