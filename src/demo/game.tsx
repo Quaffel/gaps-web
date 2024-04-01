@@ -1,6 +1,6 @@
-import { Card, RankValues, SuitValues } from "./cards";
-import { Board } from "./ui/board/board";
-import { CardPosition, Game, Swap } from "./ui/game";
+import { Card, RankValues, SuitValues } from "../cards";
+import { Board } from "../ui/board/board";
+import { CardPosition, Game, Swap } from "../ui/game";
 
 const testBoardState: Board<Card | null> = SuitValues.map(suit => RankValues.map(rank => ({
     rank, suit
@@ -16,7 +16,7 @@ function setAt(position: CardPosition, value: Card | null): void {
     testBoardState[position.row][position.column] = value;
 }
 
-export function DemoGame() {
+export function GameDemo() {
     function requestSwap(request: Swap): 'accept' | 'reject' {
         const fromPosition = request.from;
         const toPosition = request.to;
