@@ -1,14 +1,6 @@
 import { Card } from "../../cards"
+import { getImagePathForCard } from "../resources";
 import './card.css';
-
-function getImagePathForCard(card: Card | null): string {
-    const basePath = './res/cards';
-    if (card === null) {
-        return `${basePath}/back.svg`;
-    }
-
-    return `${basePath}/${card.rank}_of_${card.suit}.svg`
-}
 
 function getAltTextForCard(card: Card | null): string {
     if (card === null) {

@@ -1,10 +1,11 @@
 import React from "react";
-import { Card, RankValues, SuitValues } from "../cards";
+import { Card } from "../cards";
 import { Board, Highlight, HighlightedBoard } from "./board/board";
-import { CardPosition, Game, Swap } from "./game";
+import { Swap } from "./game";
 import { ComponentType } from "../util/types";
 
 import './playback.css';
+import { getImagePathForIcon } from "./resources";
 
 export type DisplayState = 'initial' | 'final' | number;
 
@@ -44,7 +45,7 @@ export function PlaybackBoard({
                 const assertStateIsFinal: 'final' = displayedState;
                 return swaps.length;
             })();
-        
+
         for (let swapIdx = 0; swapIdx < displayedSwapIdx; swapIdx++) {
             performSwap(swapIdx);
         }
@@ -94,12 +95,6 @@ export interface PlaybackControl {
     onAction?: () => void
 }
 
-function getImagePathForAction(
-    icon: Action
-): string {
-    return `./res/icons/${icon}.svg`
-}
-
 export function PlaybackControlsBar({
     controls
 }: {
@@ -109,7 +104,7 @@ export function PlaybackControlsBar({
     return <div className="playback-controls-bar">
         {controls.map(it => {
             return <button disabled={!it.enabled} onClick={() => it.onAction?.()}>
-                <img src={getImagePathForAction(it.action)} />
+                <img src={getImagePathForIcon(it.action)} />
             </button>;
         })}
     </div>
