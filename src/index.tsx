@@ -1,47 +1,39 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Game } from './ui/game';
-import { DemoGame } from './gameDemo';
-import { PlaybackControlsBar } from './ui/playback';
-import { GamePlayback } from './ui/game-playback';
-import { Board } from './ui/board/board';
-import { Card, RankValues, SuitValues } from './cards';
+
+import { GameDemo } from './demo/game';
+import { PlaybackDemo } from './demo/playback';
+import { SelectionDisplay, WithSelector } from './ui/menu/selection';
+import { SelectionBar } from './ui/menu/selection-bar';
+import { getResourcePath } from './ui/resources';
 
 import './index.css';
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+    document.getElementById('root') as HTMLElement
 );
-
-const testBoardState: Board<Card | null> = SuitValues.map(suit => RankValues.map(rank => ({
-  rank, suit
-})));
-
-testBoardState[1][2] = null;
-
 
 root.render(
-  <React.StrictMode>
-    <header>
-      <span>Gaps</span>
-    </header>
-    <main>
-      {/* <h1>Regular game</h1>
-      <DemoGame /> */}
-      <h1>Playback</h1>
-      <GamePlayback initialBoard={testBoardState} swaps={[
-        {
-          from: {
-            column: 1,
-            row: 1,
-          },
-          to: {
-            column: 2,
-            row: 2,
-          }
-        }
-      ]} />
-    </main>
-  </React.StrictMode>
-);
+    <React.StrictMode>
+        <WithSelector options={[
+            {
+                label: "Play yourself",
+                icon: 'icon-feather/play',
+                content: () => <GameDemo />
+            }, {
+                label: "Solve with A*",
+                icon: 'icon-feather/star',
+                content: () => <PlaybackDemo />,
+            }]}>
+            <header>
+                <span>Gaps</span>
+                <SelectionBar />
 
+                <a href=""><img src={getResourcePath('icon-feather/github')} alt='go to GitHub repository' /></a>
+            </header>
+            <main>
+                <SelectionDisplay />
+            </main>
+        </WithSelector>
+    </React.StrictMode >
+);
