@@ -29,7 +29,9 @@ root.render(
                 <span>Gaps</span>
                 <SelectionBar />
 
-                <a href=""><img src={getResourcePath('icon-feather/github')} alt='go to GitHub repository' /></a>
+                <a href="https://github.com/owengombas/gaps-web">
+                    <img src={getResourcePath('icon-feather/github')} alt='go to GitHub repository' />
+                </a>
             </header>
             <main>
                 <SelectionDisplay />

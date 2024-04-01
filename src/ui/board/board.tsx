@@ -1,17 +1,15 @@
 import { CardRow } from "./card-row";
 
-import "./board.css";
-import { Card } from "../../cards";
+import React from "react";
+import { Board, Card, Row } from "../../cards";
 import { CardPosition } from "../game";
 import { CardSpotState } from "./card";
-import React from "react";
 
-export type Row<T> = Array<T>;
-export type Board<T> = Array<Row<T>>
+import "./board.css";
 
 export type BoardState = Board<Card | null>;
 
-export function Board({
+export function PlainBoard({
     rows,
     onCardSelect
 }: {
@@ -50,5 +48,5 @@ export function HighlightedBoard({
         })
     ), [state, highlights]);
 
-    return <Board rows={cardState} onCardSelect={onCardSelect} />
+    return <PlainBoard rows={cardState} onCardSelect={onCardSelect} />
 }

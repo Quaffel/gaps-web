@@ -1,8 +1,7 @@
 import React from "react";
-import { Card } from "../cards";
+import { Board, Card } from "../cards";
 import { Swap } from "./game";
 import { DisplayState, PlaybackBoard, PlaybackControlsBar } from "./playback";
-import { Board } from "./board/board";
 
 import './game-playback.css';
 

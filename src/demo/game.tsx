@@ -1,5 +1,4 @@
-import { Card, RankValues, SuitValues } from "../cards";
-import { Board } from "../ui/board/board";
+import { Board, Card, RankValues, SuitValues } from "../cards";
 import { CardPosition, Game, Swap } from "../ui/game";
 
 const testBoardState: Board<Card | null> = SuitValues.map(suit => RankValues.map(rank => ({

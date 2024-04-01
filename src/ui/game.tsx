@@ -2,7 +2,6 @@ import React from "react";
 import { Card } from "../cards";
 import { BoardState, HighlightedBoard } from "./board/board";
 
-
 import './game.css';
 
 export interface CardPosition {

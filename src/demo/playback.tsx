@@ -1,5 +1,4 @@
-import { Card, RankValues, SuitValues } from "../cards";
-import { Board } from "../ui/board/board";
+import { Board, Card, RankValues, SuitValues } from "../cards";
 import { Swap } from "../ui/game";
 import { GamePlayback } from "../ui/game-playback";
 

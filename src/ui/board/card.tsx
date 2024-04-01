@@ -1,5 +1,6 @@
-import { Card } from "../../cards"
-import { Resource, getResourcePath } from "../resources";
+import { Card } from "../../cards";
+import { getResourcePath } from "../resources";
+
 import './card.css';
 
 function getAltTextForCard(card: Card | null): string {

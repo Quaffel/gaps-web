@@ -1,10 +1,9 @@
 import React from "react";
-import { Card } from "../cards";
-import { Board, Highlight, HighlightedBoard } from "./board/board";
-import { Swap } from "./game";
+import { Board, Card } from "../cards";
 import { ComponentType } from "../util/types";
-
-import { Resource, getResourcePath } from "./resources";
+import { Highlight, HighlightedBoard } from "./board/board";
+import { Swap } from "./game";
+import { getResourcePath } from "./resources";
 
 import './playback.css';
 
@@ -28,7 +27,7 @@ export function PlaybackBoard({
         displayedState: DisplayState,
     ): Board<Card | null> {
         const board = structuredClone(initialBoard);
-        if (displayedState == 'initial') return board;
+        if (displayedState === 'initial') return board;
 
         function performSwap(swapIdx: number) {
             const swap = swaps[swapIdx];
@@ -108,7 +107,7 @@ export function PlaybackControlsBar({
     return <div className="playback-controls-bar">
         {controls.map(it => {
             return <button disabled={!it.enabled} onClick={() => it.onAction?.()}>
-                <img src={getActionIcon(it.action)} />
+                <img src={getActionIcon(it.action)} alt={it.action} />
             </button>;
         })}
     </div>

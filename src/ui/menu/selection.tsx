@@ -44,7 +44,7 @@ export function SelectionDisplay() {
     const displayedElement = React.useMemo(() => {
         const selectedItem = selectionContext.options[selectionContext.selectedOptionIdx];
         return selectedItem.content();
-    }, [selectionContext.selectedOptionIdx]);
+    }, [selectionContext.options, selectionContext.selectedOptionIdx]);
 
     return displayedElement;
 }

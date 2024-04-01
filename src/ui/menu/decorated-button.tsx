@@ -16,6 +16,6 @@ export function DecoratedButton({
             equal size and do the layouting within the inner 'div' element. */}
         <div>{label}</div>
 
-        <img src={getResourcePath(icon)} />
+        <img src={getResourcePath(icon)} alt="" />
     </button>
 }
