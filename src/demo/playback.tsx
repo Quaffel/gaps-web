@@ -2,12 +2,18 @@ import { Board, Card, RankValues, SuitValues } from "../cards";
 import { Swap } from "../ui/game";
 import { GamePlayback } from "../ui/game-playback";
 
+// Same board as in './game.tsx'.
 const sampleInitialBoard: Board<Card | null> = SuitValues.map(suit => RankValues.map(rank => ({
     rank, suit
 })));
 
 sampleInitialBoard[1][2] = null;
 
+// Swaps of cards (and empty spots, collectively referred to as "spots") are solely represented by the positions
+// of the affected spots.
+// The navigation controls are completely provided by the used 'GamePlayback' component.
+// Please refer to its definition in case more fine-grained control is required.
+// Automatic playback is not yet implemented, which is why the 'play' button is always grayed out.
 const sampleSwaps: Array<Swap> = [
     {
         from: {

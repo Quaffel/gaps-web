@@ -1,9 +1,8 @@
-import { CardRow } from "./card-row";
-
 import React from "react";
 import { Board, Card, Row } from "../../cards";
 import { CardPosition } from "../game";
 import { CardSpotState } from "./card";
+import { CardRow } from "./card-row";
 
 import "./board.css";
 
@@ -36,7 +35,16 @@ export function HighlightedBoard({
     state: BoardState,
     highlights: Array<Highlight>,
     onCardSelect?: (card: Card | null, row: number, column: number) => void
-}): JSX.Element {
+    }): JSX.Element {
+    for (let it of highlights) {
+        if (it.spot.row < 0 || it.spot.row >= state.length)
+            throw new Error("highlight row idx is out of bounds");
+
+        const row = state[it.spot.row];
+        if (it.spot.column < 0 || it.spot.column >= row.length)
+            throw new Error("highlight column idx is out of bounds");
+    }
+
     const cardState = React.useMemo<Board<CardSpotState>>(() => state.map(
         (row, rowIdx) => row.map((card, cardIdx) => {
             const highlight = highlights.find(it => it.spot.row === rowIdx && it.spot.column === cardIdx)?.highlight;

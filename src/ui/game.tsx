@@ -1,6 +1,6 @@
 import React from "react";
 import { Card } from "../cards";
-import { BoardState, HighlightedBoard } from "./board/board";
+import { BoardState, Highlight, HighlightedBoard } from "./board/board";
 
 import './game.css';
 
@@ -9,22 +9,19 @@ export interface CardPosition {
     column: number
 }
 
-export interface GameState {
-    board: BoardState
-    pastSwaps: number
-}
-
 export interface Swap {
     from: CardPosition,
     to: CardPosition,
 }
 
 export function Game({
-    state,
-    requestSwap
+    board,
+    requestSwapCandidates,
+    requestSwap,
 }: {
-    state: GameState,
-    requestSwap: (swapRequest: Swap) => 'accept' | 'reject'
+    board: BoardState,
+    requestSwapCandidates(card: CardPosition): Array<CardPosition>,
+    requestSwap(swapRequest: Swap): 'accept' | 'reject',
 }): JSX.Element {
     const [selectedCardPosition, setSelectedCardPosition] = React.useState<CardPosition | null>(null);
 
@@ -37,7 +34,7 @@ export function Game({
 
         if (selectedCardPosition != null) {
             if (isSelected(cardPosition)) {
-                // The selected card was selected again, meaning that it should be un-selected.
+                // The selected card was selected again, meaning that it should be de-selected.
                 setSelectedCardPosition(null);
                 return;
             }
@@ -66,11 +63,25 @@ export function Game({
         setSelectedCardPosition({ row, column });
     }
 
+    const highlights = React.useMemo<Array<Highlight>>(() => {
+        if (selectedCardPosition === null) return [];
+
+        const swapCandidates = requestSwapCandidates(selectedCardPosition);
+
+        return [
+            {
+                spot: selectedCardPosition,
+                highlight: 'selection'
+            },
+            ...swapCandidates.map(it => ({
+                spot: it,
+                highlight: 'candidate' as const,
+            }))
+        ]
+    }, [selectedCardPosition]);
+
     return <HighlightedBoard
-        state={state.board}
-        highlights={selectedCardPosition !== null ? [{
-            spot: selectedCardPosition,
-            highlight: 'selection'
-        }] : []}
+        state={board}
+        highlights={highlights}
         onCardSelect={handleCardSelection} />
 }
