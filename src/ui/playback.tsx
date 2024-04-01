@@ -43,7 +43,7 @@ export function PlaybackBoard({
         const displayedSwapIdx = typeof displayedState === 'number'
             ? displayedState
             : (() => {
-                const assertStateIsFinal: 'final' = displayedState;
+                const _assertStateIsFinal: 'final' = displayedState;
                 return swaps.length;
             })();
 
