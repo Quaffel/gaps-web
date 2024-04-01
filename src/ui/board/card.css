@@ -1,43 +1,27 @@
 .card {
-    /* width: fit-content; */
-    border-color: black;
-    border-width: 1px;
-    box-sizing: border-box;
-
     flex-grow: 1;
     flex-basis: 0;
 
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    background: none;
 }
 
 .card img {
-    min-height: 50px;
+    min-height: 4rem;
     max-height: 100%;
-    min-width: 50px;
+    min-width: 5rem;
     max-width: 100%;
 }
 
-.card.card-present {
-    border-style: dashed;
-    /* height: fit-content; */
-}
-
 .card.card.card-highlight-candidate img {
-    /* border-color: orange;*/
-    /* border-style: solid;*/
-    /* border-width: 2px; */
-
-    box-shadow: rgba(228, 23, 23, 0.8) 0px 3px 8px;
+    box-shadow: rgba(228, 23, 23, 1) 2px 3px 10px;
+    border: 2px rgba(228, 23, 23, 1) solid;
 }
 
-.card.card-highlight-selection {
-    border-color: red;
-    border-style: solid;
-    border-width: 5px;
-}
-
-.card:not(.card-present) {
-    border-style: solid;
+.card.card-highlight-selection img {
+    box-shadow: rgba(245, 167, 72, 1) 2px 3px 10px;
+    border: 2px rgba(245, 167, 72, 1) solid;
 }
