@@ -83,7 +83,22 @@ function Index() {
                 selectedCard={selectedCard}
                 handleCardSelect={handleCardSelect}
             />
-            
+            <div>
+                <button onClick={initializeBoard}>New game</button>
+                <div>
+                    <input
+                        type="number"
+                        value={rows}
+                        onChange={(e) => setRows(Number(e.target.value))}
+                    />
+                    <input
+                        type="number"
+                        value={columns}
+                        onChange={(e) => setColumns(Number(e.target.value))}
+                    />
+                </div>
+            </div>
+
             <hr/>
 
             <span style={{ opacity: .5 }}>
@@ -96,20 +111,6 @@ function Index() {
                     selectedCard={selectedCard}
                 />
             </span>
-
-            <button onClick={initializeBoard}>New game</button>
-            <div>
-                <input
-                    type="number"
-                    value={rows}
-                    onChange={(e) => setRows(Number(e.target.value))}
-                />
-                <input
-                    type="number"
-                    value={columns}
-                    onChange={(e) => setColumns(Number(e.target.value))}
-                />
-            </div>
         </div>
     );
 }
