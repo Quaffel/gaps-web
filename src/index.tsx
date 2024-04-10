@@ -83,15 +83,20 @@ function Index() {
                 selectedCard={selectedCard}
                 handleCardSelect={handleCardSelect}
             />
-            <hr></hr>
-            <Board
-                state={state}
-                rows={rows}
-                columns={columns}
-                moveableCards={moveableCards}
-                possibleGaps={possibleGaps}
-                selectedCard={selectedCard}
-            />
+            
+            <hr/>
+
+            <span style={{ opacity: .5 }}>
+                <Board
+                    state={state}
+                    rows={rows}
+                    columns={columns}
+                    moveableCards={moveableCards}
+                    possibleGaps={possibleGaps}
+                    selectedCard={selectedCard}
+                />
+            </span>
+
             <button onClick={initializeBoard}>New game</button>
             <div>
                 <input
