@@ -1,5 +1,5 @@
-import { Card } from "../../logic/Card";
-import { getResourcePath } from "../../logic/Ressource";
+import { Card } from "../logic/Card";
+import { getResourcePath } from "../logic/Ressource";
 
 import "./card.css";
 

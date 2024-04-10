@@ -1,14 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Board } from "./ui/board/board";
-
-import "./index.css";
+import { Board } from "./ui/board";
 import { BoardState } from "./logic/BoardState";
 import { Card, CardPosition } from "./logic/Card";
 
-const root = ReactDOM.createRoot(
-    document.getElementById("root") as HTMLElement
-);
+import "./index.css";
 
 const board = new BoardState(4, 13);
 
@@ -23,12 +19,20 @@ function Index() {
     );
     const [possibleGaps, setPossibleGaps] = React.useState<CardPosition[]>([]);
     const [state, setState] = React.useState(board.state);
+    const [verifyValidMove, setVerifyValidMove] = React.useState<boolean>(true);
+    const [seed, setSeed] = React.useState(board.computeSeed());
 
     React.useEffect(() => {
         board.onUpdate = () => {
             setState([...board.state]);
+            setSeed(board.computeSeed());
         };
     }, []);
+
+    function loadSeed() {
+        const seedElement = document.getElementById("seed") as HTMLInputElement;
+        board.loadSeed(seedElement.value);
+    }
 
     function initializeBoard() {
         board.reset(rows, columns);
@@ -38,7 +42,7 @@ function Index() {
     }
 
     function performMove(from: CardPosition, to: CardPosition) {
-        board.requestMove(from, to);
+        board.requestMove(from, to, verifyValidMove);
         setSelectedCard(null);
         setMoveableCards(board.getMoveableCards());
         setPossibleGaps([]);
@@ -74,6 +78,9 @@ function Index() {
 
     return (
         <div>
+            <div>
+                <p>{seed}</p>
+            </div>
             <Board
                 state={state}
                 rows={rows}
@@ -86,16 +93,35 @@ function Index() {
             <div>
                 <button onClick={initializeBoard}>New game</button>
                 <div>
-                    <input
-                        type="number"
-                        value={rows}
-                        onChange={(e) => setRows(Number(e.target.value))}
-                    />
-                    <input
-                        type="number"
-                        value={columns}
-                        onChange={(e) => setColumns(Number(e.target.value))}
-                    />
+                    <div>
+                        <input
+                            type="number"
+                            value={rows}
+                            onChange={(e) => setRows(Number(e.target.value))}
+                        />
+                    </div>
+
+                    <div>
+                        <input
+                            type="number"
+                            value={columns}
+                            onChange={(e) => setColumns(Number(e.target.value))}
+                        />
+                    </div>
+
+                    <div>
+                        <input
+                            type="checkbox"
+                            checked={verifyValidMove}
+                            onChange={(e) => setVerifyValidMove(e.target.checked)}
+                        />
+                        <label>Verify valid move</label>
+                    </div>
+
+                    <div>
+                        <input type="text" id="seed"/>
+                        <button onClick={loadSeed}>Load seed</button>
+                    </div>
                 </div>
             </div>
 
@@ -114,6 +140,10 @@ function Index() {
         </div>
     );
 }
+
+const root = ReactDOM.createRoot(
+    document.getElementById("root") as HTMLElement
+);
 
 root.render(
     <React.StrictMode>

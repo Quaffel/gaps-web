@@ -44,6 +44,32 @@ export class BoardState {
         this._onUpdate = fn;
     }
 
+    computeSeed(): string {
+        let seed = `${this.rows}.${this.columns} `;
+        seed += this.flatMap(card => card ? `${card.suit}.${card.rank}` : "x.x").join(" ");
+        return seed;
+    }
+
+    loadSeed(seed: string) {
+        const parts = seed.split(" ");
+        const [rows, columns] = parts[0].split(".").map(Number);
+        this.reset(rows, columns);
+
+        const cardParts = parts.slice(1);
+        cardParts.forEach((part, idx) => {
+            const [suit, rank] = part.split(".").map((part) => {
+                if (part === "x") {
+                    return null
+                }
+                return part as Suit | Rank;
+            });
+
+            this._state[Math.floor(idx / columns)][idx % columns] = suit === null ? null : { suit: suit! as Suit, rank: rank! as Rank };
+        });
+
+        this._onUpdate();
+    }
+
     removeHighestCards() {
         for (let i = 0; i < this._state.length; i++) {
             for (let j = 0; j <  this._state[i].length; j++) {
@@ -61,6 +87,8 @@ export class BoardState {
     setCardAt(position: CardPosition, value: Card | null): void {
         this._state[position.row][position.column] = value;
         this._onUpdate();
+        console.log(this.getStuckGaps())
+        console.log(this.computeSeed())
     }
 
     map<T>(fn: (card: Card | null, position: CardPosition) => T): T[][] {
@@ -129,12 +157,18 @@ export class BoardState {
     // Note that while the UI code ensures that a card is not swapped with itself, it does not ensure consistency
     // with 'requestSwapCandidates'. That is, this function is also called for cards that have not previously
     // been reported as candidates.
-    requestMove(from: CardPosition, to: CardPosition): boolean {
+    requestMove(from: CardPosition, to: CardPosition, verifyValidity: boolean = true): boolean {
         const fromCard = this.getCardAt(from);
         const toCard = this.getCardAt(to);
 
         if (fromCard === null) {
             return false;
+        }
+
+        if (!verifyValidity) {
+            this.setCardAt(from, null);
+            this.setCardAt(to, fromCard);
+            return true;
         }
 
         // Check if the card preceding the gap is the card that differs by one rank and has the same suit.
@@ -185,5 +219,19 @@ export class BoardState {
             return false;
         });
         return moveableCards.map(({ position }) => position);
+    }
+
+    getStuckGaps(): CardPosition[] {
+        return this.filter((card, position) => {
+            const previousColumn = position.column - 1;
+            if (previousColumn < 0) {
+                return false;
+            }
+            const previousCard = this.getCardAt({ row: position.row, column: previousColumn });
+            if (previousCard?.rank === this.lastRank) {
+                return true;
+            }
+            return false;
+        }).map(({ position }) => position);
     }
 }

@@ -1,6 +1,4 @@
-import React from "react";
-import { BoardState } from "../../logic/BoardState";
-import { Card, CardPosition } from "../../logic/Card";
+import { Card, CardPosition } from "../logic/Card";
 import { CardTile } from "./card";
 
 import "./board.css";
