@@ -1,54 +1,52 @@
-import { Card } from "../../cards";
-import { getResourcePath } from "../resources";
+import { Card } from "../../logic/Card";
+import { getResourcePath } from "../../logic/Ressource";
 
-import './card.css';
+import "./card.css";
 
 function getAltTextForCard(card: Card | null): string {
     if (card === null) {
         return "placeholder for a card";
     }
 
-    return `card of rank ${card.rank} and suit ${card.suit}`
+    return `card of rank ${card.rank} and suit ${card.suit}`;
 }
 
-export interface CardSpotState {
-    card: Card | null,
-    highlight: 'selection' | 'candidate' | 'none',
+interface CardTileProps {
+    isMoveable?: boolean;
+    isCandidate?: boolean;
+    card: Card | null;
+    isSelected?: boolean;
+    onSelect?: () => void;
 }
 
-export function CardTile({
-    spotState,
-    onSelect
-}: {
-    spotState: CardSpotState,
-    onSelect?: () => void
-}): JSX.Element {
-    function getCardResource(card: Card | null): string {
-        const cardPath = card === null ? 'cards/back' as const : `cards/${card.rank}_of_${card.suit}` as const;
-        return getResourcePath(cardPath);
+export function CardTile(props: CardTileProps): JSX.Element {
+    function getCardResource(card: Card | null): string | null {
+        if (card === null) {
+            return null;
+        }
+        return getResourcePath(`cards/${card.rank}_of_${card.suit}` as const);
     }
 
-    let classes = ["card"]
-
-    const highlightClass = {
-        "candidate": "card-highlight-candidate",
-        "selection": "card-highlight-selection",
-        "none": null
-    }[spotState.highlight]
-    if (highlightClass !== null) classes.push(highlightClass);
-
-    if (spotState.card != null) {
-        classes.push("card-present");
+    let classes = ["card"];
+    if (props.isSelected || props.isMoveable) {
+        classes.push("selected");
+    } else if (props.isCandidate) {
+        classes.push("candidate");
     }
 
     const imageElement = (() => {
-        const imageSrc = getCardResource(spotState.card);
-        const altText = getAltTextForCard(spotState.card);
+        const imageSrc = getCardResource(props.card);
+        const altText = getAltTextForCard(props.card);
 
-        return <img src={imageSrc} alt={altText} />;
+        if (imageSrc === null) {
+            return <div className="card-back card-inner" />;
+        }
+        return <img className="card-inner" src={imageSrc} alt={altText} />;
     })();
 
-    return <div className={classes.join(" ")} onClick={() => onSelect?.()}>
-        {imageElement}
-    </div>
+    return (
+        <div className={classes.join(" ")} onClick={() => props.onSelect?.()}>
+            {imageElement}
+        </div>
+    );
 }

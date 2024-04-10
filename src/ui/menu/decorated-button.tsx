@@ -1,4 +1,4 @@
-import { Resource, getResourcePath } from '../resources';
+import { Resource, getResourcePath } from '../../logic/Ressource';
 
 import './decorated-button.css';
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Resource } from "../resources";
+import { Resource } from "../../logic/Ressource";
 
 interface Option {
     label: string,
