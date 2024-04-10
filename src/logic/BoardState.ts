@@ -5,6 +5,7 @@ import { CardPosition, Swap, Card } from './Card';
 
 export class BoardState {
     private _state: (Card | null)[][];
+    private _onUpdate: () => void = () => {};
 
     get rows() {
         return this._state.length;
@@ -31,11 +32,16 @@ export class BoardState {
                 rank: Ranks[rankIdx],
             };
         }));
+        this._onUpdate();
     }
 
     constructor(rows: number, columns: number) {
         this._state = [];
         this.reset(rows, columns);
+    }
+
+    set onUpdate(fn: () => void) {
+        this._onUpdate = fn;
     }
 
     removeHighestCards() {
@@ -54,6 +60,7 @@ export class BoardState {
 
     setCardAt(position: CardPosition, value: Card | null): void {
         this._state[position.row][position.column] = value;
+        this._onUpdate();
     }
 
     map<T>(fn: (card: Card | null, position: CardPosition) => T): T[][] {
