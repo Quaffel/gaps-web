@@ -12,6 +12,8 @@ function getAltTextForCard(card: Card | null): string {
 }
 
 interface CardTileProps {
+    width?: string | number;
+    height?: string | number;
     isMoveable?: boolean;
     isCandidate?: boolean;
     card: Card | null;
@@ -22,7 +24,7 @@ interface CardTileProps {
 export function CardTile(props: CardTileProps): JSX.Element {
     function getCardResource(card: Card | null): string | null {
         if (card === null) {
-            return null;
+            return getResourcePath(`cards/back` as const);
         }
         return getResourcePath(`cards/${card.rank}_of_${card.suit}` as const);
     }
@@ -45,7 +47,10 @@ export function CardTile(props: CardTileProps): JSX.Element {
     })();
 
     return (
-        <div className={classes.join(" ")} onClick={() => props.onSelect?.()}>
+        <div
+        style={{ width: `${props.width ?? 100}%`, height: `${props.height ?? 100}vh` }}
+        className={classes.join(" ")}
+        onClick={() => props.onSelect?.()}>
             {imageElement}
         </div>
     );

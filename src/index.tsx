@@ -8,6 +8,10 @@ import "./index.css";
 
 const board = new BoardState(4, 13);
 
+async function wait(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function Index() {
     const [rows, setRows] = React.useState(4);
     const [columns, setColumns] = React.useState(13);
@@ -19,15 +23,43 @@ function Index() {
     );
     const [possibleGaps, setPossibleGaps] = React.useState<CardPosition[]>([]);
     const [state, setState] = React.useState(board.state);
-    const [verifyValidMove, setVerifyValidMove] = React.useState<boolean>(true);
+    const [verifyValidMove, setVerifyValidMove] = React.useState<boolean>(false);
     const [seed, setSeed] = React.useState(board.computeSeed());
+
+    function resetHand() {
+        setMoveableCards(board.getMoveableCards().map(({from}) => from));
+        setPossibleGaps([]);
+        setSelectedCard(null);
+    }
 
     React.useEffect(() => {
         board.onUpdate = () => {
             setState([...board.state]);
             setSeed(board.computeSeed());
+            setRows(board.rows);
+            setColumns(board.columns);
+            resetHand();
         };
     }, []);
+
+    // 4.4 3.0 3.2 1.0 x.x 0.1 x.x 1.1 2.0 3.1 2.2 x.x 0.0 1.2 2.1 0.2 x.x
+    async function performAStar() {
+        const size = board.rows * board.columns;
+        const path = await board.aStar((bs) => {
+            const functions = [
+                size - bs.getWellPlacedCards().length,
+                bs.getStuckGaps().length,
+                bs.getDoubleGaps().length
+            ]
+            const weights = [1, 1, 1];
+            return functions.reduce((acc, val, idx) => acc + val * weights[idx], 0);
+        });
+        console.log(path);
+        for (const p of path) {
+            board.load(p);
+            await wait(500);
+        }
+    }
 
     function loadSeed() {
         const seedElement = document.getElementById("seed") as HTMLInputElement;
@@ -37,15 +69,14 @@ function Index() {
     function initializeBoard() {
         board.reset(rows, columns);
         board.removeHighestCards();
+    }
+
+    function shuffleBoard() {
         board.shuffle();
-        setMoveableCards(board.getMoveableCards());
     }
 
     function performMove(from: CardPosition, to: CardPosition) {
         board.requestMove(from, to, verifyValidMove);
-        setSelectedCard(null);
-        setMoveableCards(board.getMoveableCards());
-        setPossibleGaps([]);
     }
 
     function handleCardSelect(card: Card | null, position: CardPosition) {
@@ -58,8 +89,7 @@ function Index() {
             position.row === selectedCard?.row &&
             position.column === selectedCard?.column
         ) {
-            setSelectedCard(null);
-            setMoveableCards(board.getMoveableCards());
+            resetHand();
             return;
         }
 
@@ -91,8 +121,20 @@ function Index() {
                 handleCardSelect={handleCardSelect}
             />
             <div>
-                <button onClick={initializeBoard}>New game</button>
+                <button onClick={initializeBoard}>Reset</button>
+                <button onClick={shuffleBoard}>Shuffle</button>
+                <button onClick={performAStar}>A*</button>
+                <button onClick={() => console.log(board.getChildren())}>Console log children</button>
                 <div>
+                    <div>
+                        <input
+                            type="checkbox"
+                            checked={verifyValidMove}
+                            onChange={(e) => setVerifyValidMove(e.target.checked)}
+                        />
+                        <label>Verify valid move</label>
+                    </div>
+
                     <div>
                         <input
                             type="number"
@@ -110,22 +152,13 @@ function Index() {
                     </div>
 
                     <div>
-                        <input
-                            type="checkbox"
-                            checked={verifyValidMove}
-                            onChange={(e) => setVerifyValidMove(e.target.checked)}
-                        />
-                        <label>Verify valid move</label>
-                    </div>
-
-                    <div>
                         <input type="text" id="seed"/>
                         <button onClick={loadSeed}>Load seed</button>
                     </div>
                 </div>
             </div>
 
-            <hr/>
+            {/* <hr/>
 
             <span style={{ opacity: .5 }}>
                 <Board
@@ -136,7 +169,7 @@ function Index() {
                     possibleGaps={possibleGaps}
                     selectedCard={selectedCard}
                 />
-            </span>
+            </span> */}
         </div>
     );
 }

@@ -32,7 +32,7 @@ export class BoardState {
                 rank: Ranks[rankIdx],
             };
         }));
-        this._onUpdate();
+        this.callOnUpdate();
     }
 
     constructor(rows: number, columns: number) {
@@ -44,6 +44,36 @@ export class BoardState {
         this._onUpdate = fn;
     }
 
+    private callOnUpdate() {
+        this._onUpdate();
+    }
+
+    copy(): BoardState {
+        const copy = new BoardState(this.rows, this.columns);
+        copy._state = this._state.map(row => row.map(card => card));
+        return copy;
+    }
+
+    load(bs: BoardState) {
+        this._state = bs._state.map(row => row.map(card => card));
+        this.callOnUpdate();
+    }
+
+    isSolved(): boolean {
+        const wellPlacedCards = this.getWellPlacedCards();
+        return wellPlacedCards.length === this.rows * this.columns;
+    }
+
+    getChildren(): BoardState[] {
+        const possibleMoves = this.getMoveableCards();
+        const children = possibleMoves.map(move => {
+            const copy = this.copy();
+            copy.requestMove(move.from, move.to, false);
+            return copy;
+        });
+        return children;
+    }
+
     computeSeed(): string {
         let seed = `${this.rows}.${this.columns} `;
         seed += this.flatMap(card => card ? `${card.suit}.${card.rank}` : "x.x").join(" ");
@@ -51,7 +81,7 @@ export class BoardState {
     }
 
     loadSeed(seed: string) {
-        const parts = seed.split(" ");
+        const parts = seed.trim().split(" ");
         const [rows, columns] = parts[0].split(".").map(Number);
         this.reset(rows, columns);
 
@@ -61,13 +91,13 @@ export class BoardState {
                 if (part === "x") {
                     return null
                 }
-                return part as Suit | Rank;
+                return Number(part);
             });
 
             this._state[Math.floor(idx / columns)][idx % columns] = suit === null ? null : { suit: suit! as Suit, rank: rank! as Rank };
         });
 
-        this._onUpdate();
+        this.callOnUpdate();
     }
 
     removeHighestCards() {
@@ -86,9 +116,7 @@ export class BoardState {
 
     setCardAt(position: CardPosition, value: Card | null): void {
         this._state[position.row][position.column] = value;
-        this._onUpdate();
-        console.log(this.getStuckGaps())
-        console.log(this.computeSeed())
+        this.callOnUpdate();
     }
 
     map<T>(fn: (card: Card | null, position: CardPosition) => T): T[][] {
@@ -194,44 +222,143 @@ export class BoardState {
         return false;
     }
 
-    getMoveableCards(): CardPosition[] {
-        const gaps: CardPosition[] = this.getGapsPositions();
-        const moveableCards = this.filter((card, position) => {
-            if (card === null) {
-                return false;
-            }
-
-            for (let gap of gaps) {
-                const previousColumn = gap.column - 1;
-                if (previousColumn < 0) {
-                    return true;
+    getMoveableCards(): {from: CardPosition, to: CardPosition}[] {
+        const moveableCards = this.state.reduce<{from: CardPosition, to: CardPosition}[]>((acc, row, rowIdx) => {
+            return row.reduce<{from: CardPosition, to: CardPosition}[]>((acc, card, columnIdx) => {
+                if (card === null) {
+                    return acc;
                 }
 
-                const previousCard = this.getCardAt({ row: gap.row, column: previousColumn });
-                if (previousCard === null) {
-                    continue;
-                }
-
-                if (card.rank === previousCard.rank+1 && card.suit === previousCard.suit) {
-                    return true;
-                }
-            }
-            return false;
-        });
-        return moveableCards.map(({ position }) => position);
+                const cardPosition = { row: rowIdx, column: columnIdx };
+                const candidates = this.getCandidateGaps(cardPosition);
+                const moves = candidates.map(candidate => ({ from: cardPosition, to: candidate }));
+                return [...acc, ...moves];
+            }, acc);
+        }, []);
+        return moveableCards;
     }
 
     getStuckGaps(): CardPosition[] {
-        return this.filter((card, position) => {
-            const previousColumn = position.column - 1;
+        return this.getGapsPositions().filter(gap => {
+            const previousColumn = gap.column - 1;
             if (previousColumn < 0) {
                 return false;
             }
-            const previousCard = this.getCardAt({ row: position.row, column: previousColumn });
-            if (previousCard?.rank === this.lastRank) {
+
+            const nextColumn = gap.column + 1;
+            if (nextColumn >= this.columns) {
+                return false;
+            }
+
+            const previousCard = this.getCardAt({ row: gap.row, column: previousColumn });
+            if (previousCard === null) {
+                return false;
+            }
+
+            if (previousCard.rank === this.lastRank - 1) {
                 return true;
             }
+
             return false;
-        }).map(({ position }) => position);
+        });
+    }
+
+    getDoubleGaps(): CardPosition[] {
+        return this.getGapsPositions().filter(gap => {
+            const previousColumn = gap.column - 1;
+            if (previousColumn < 0) {
+                return false;
+            }
+
+            const previousCard = this.getCardAt({ row: gap.row, column: previousColumn });
+            if (previousCard === null) {
+                return true;
+            }
+
+            return false;
+        });
+    }
+
+    getWellPlacedCards(): CardPosition[] {
+        const res = this.state.reduce<CardPosition[][]>((acc, row, rowIdx) => {
+            const resRow = row.reduce<CardPosition[][]>((acc, card, columnIdx) => {
+                if (this.isCardInCorrectColumn(card, columnIdx)) {
+                    const cardPosition = { row: rowIdx, column: columnIdx };
+                    let addTo = acc.length - 1;
+                    if (card !== null) {
+                        addTo = card.suit;
+                    }
+                    acc[addTo] = [...acc[addTo], cardPosition];
+                }
+                return acc;
+            }, Array(this.rows+1).fill([]));
+
+            const lengths = resRow.map(arr => arr.length);
+            const argMax = lengths.reduce((acc, val, idx) => {
+                if (val > lengths[acc]) {
+                    return idx;
+                }
+                return acc;
+            }, 0);
+
+            acc[argMax] = resRow.flat();
+
+            return acc;
+        }, Array(this.rows+1).fill([]))
+        return res.flat();
+    }
+
+    isCardInCorrectColumn(card: Card | null, column: number): boolean {
+        if (card === null) {
+            return column === this.columns - 1;
+        }
+        return card.rank === Ranks[column];
+    }
+
+    async aStar(heuristic: (bs: BoardState) => number): Promise<BoardState[]> {
+        const open: BoardState[] = [this];
+        const closed: BoardState[] = [];
+        const gScore = new Map<BoardState, number>();
+        const fScore = new Map<BoardState, number>();
+        const cameFrom = new Map<BoardState, BoardState | null>();
+
+        gScore.set(this, 0);
+        fScore.set(this, heuristic(this));
+
+        while (open.length > 0) {
+            open.sort((a, b) => fScore.get(a)! - fScore.get(b)!);
+            const current = open.shift()!;
+
+            if (current.isSolved()) {
+                let path: BoardState[] = [current];
+                let state = current;
+                while (cameFrom.has(state)) {
+                    state = cameFrom.get(state)!;
+                    path = [state, ...path];
+                }
+                return Promise.resolve(path);
+            }
+
+            closed.push(current);
+            const children = current.getChildren();
+            children.forEach(child => {
+                if (closed.includes(child)) {
+                    return;
+                }
+
+                const tentativeGScore = gScore.get(current)! + 1;
+                if (!open.includes(child)) {
+                    open.push(child);
+                } else if (tentativeGScore >= gScore.get(child)!) {
+                    return;
+                }
+
+                cameFrom.set(child, current);
+                gScore.set(child, tentativeGScore);
+                fScore.set(child, gScore.get(child)! + heuristic(child));
+            });
+        }
+
+        return Promise.resolve([]);
     }
 }

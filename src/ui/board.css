@@ -1,6 +1,5 @@
 .card-row {
     display: flex;
-    max-height: calc(100vh / 3);
     max-width: 100%;
     flex-basis: content;
 }
