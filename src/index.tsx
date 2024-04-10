@@ -25,6 +25,8 @@ function Index() {
     const [state, setState] = React.useState(board.state);
     const [verifyValidMove, setVerifyValidMove] = React.useState<boolean>(false);
     const [seed, setSeed] = React.useState(board.computeSeed());
+    const [loading, setLoading] = React.useState(false);
+    const [missPlacedCardsCount, setMissPlacedCardsCount] = React.useState(0);
 
     function resetHand() {
         setMoveableCards(board.getMoveableCards().map(({from}) => from));
@@ -34,7 +36,9 @@ function Index() {
 
     React.useEffect(() => {
         board.onUpdate = () => {
+            const size = board.rows * board.columns;
             setState([...board.state]);
+            setMissPlacedCardsCount(size - board.getWellPlacedCards().length);
             setSeed(board.computeSeed());
             setRows(board.rows);
             setColumns(board.columns);
@@ -45,20 +49,23 @@ function Index() {
     // 4.4 3.0 3.2 1.0 x.x 0.1 x.x 1.1 2.0 3.1 2.2 x.x 0.0 1.2 2.1 0.2 x.x
     async function performAStar() {
         const size = board.rows * board.columns;
+        setLoading(true);
         const path = await board.aStar((bs) => {
             const functions = [
                 size - bs.getWellPlacedCards().length,
                 bs.getStuckGaps().length,
                 bs.getDoubleGaps().length
             ]
-            const weights = [1, 1, 1];
+            const weights = [1, 100, 50];
             return functions.reduce((acc, val, idx) => acc + val * weights[idx], 0);
-        });
-        console.log(path);
+        }, 10000);
+        const isSolved = path[path.length - 1].isSolved();
+        console.log(path, `isSolved: ${isSolved}`);
         for (const p of path) {
             board.load(p);
             await wait(500);
         }
+        setLoading(false);
     }
 
     function loadSeed() {
@@ -111,6 +118,9 @@ function Index() {
             <div>
                 <p>{seed}</p>
             </div>
+            <div>
+                <p>{missPlacedCardsCount}</p>
+            </div>
             <Board
                 state={state}
                 rows={rows}
@@ -121,13 +131,15 @@ function Index() {
                 handleCardSelect={handleCardSelect}
             />
             <div>
-                <button onClick={initializeBoard}>Reset</button>
-                <button onClick={shuffleBoard}>Shuffle</button>
-                <button onClick={performAStar}>A*</button>
-                <button onClick={() => console.log(board.getChildren())}>Console log children</button>
+                {loading && <p>Loading...</p>}
+                <button disabled={loading} onClick={initializeBoard}>Reset</button>
+                <button disabled={loading} onClick={shuffleBoard}>Shuffle</button>
+                <button disabled={loading} onClick={performAStar}>A*</button>
+                <button disabled={loading} onClick={() => console.log(board.getChildren())}>Console log children</button>
                 <div>
                     <div>
                         <input
+                            disabled={loading} 
                             type="checkbox"
                             checked={verifyValidMove}
                             onChange={(e) => setVerifyValidMove(e.target.checked)}
@@ -137,6 +149,7 @@ function Index() {
 
                     <div>
                         <input
+                            disabled={loading}
                             type="number"
                             value={rows}
                             onChange={(e) => setRows(Number(e.target.value))}
@@ -145,6 +158,7 @@ function Index() {
 
                     <div>
                         <input
+                            disabled={loading}
                             type="number"
                             value={columns}
                             onChange={(e) => setColumns(Number(e.target.value))}
@@ -152,8 +166,8 @@ function Index() {
                     </div>
 
                     <div>
-                        <input type="text" id="seed"/>
-                        <button onClick={loadSeed}>Load seed</button>
+                        <input disabled={loading} type="text" id="seed"/>
+                        <button disabled={loading} onClick={loadSeed}>Load seed</button>
                     </div>
                 </div>
             </div>

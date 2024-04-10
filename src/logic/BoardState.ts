@@ -315,12 +315,15 @@ export class BoardState {
         return card.rank === Ranks[column];
     }
 
-    async aStar(heuristic: (bs: BoardState) => number): Promise<BoardState[]> {
+    async aStar(heuristic: (bs: BoardState) => number, maxDepth: number): Promise<BoardState[]> {
         const open: BoardState[] = [this];
         const closed: BoardState[] = [];
+        const openSet = new Set<String>();
+        const closedSet = new Set<String>();
         const gScore = new Map<BoardState, number>();
         const fScore = new Map<BoardState, number>();
         const cameFrom = new Map<BoardState, BoardState | null>();
+        let depth = 0;
 
         gScore.set(this, 0);
         fScore.set(this, heuristic(this));
@@ -329,7 +332,7 @@ export class BoardState {
             open.sort((a, b) => fScore.get(a)! - fScore.get(b)!);
             const current = open.shift()!;
 
-            if (current.isSolved()) {
+            if (current.isSolved() || depth > maxDepth) {
                 let path: BoardState[] = [current];
                 let state = current;
                 while (cameFrom.has(state)) {
@@ -339,16 +342,20 @@ export class BoardState {
                 return Promise.resolve(path);
             }
 
+            depth++;
             closed.push(current);
+            closedSet.add(current.computeSeed());
             const children = current.getChildren();
             children.forEach(child => {
-                if (closed.includes(child)) {
+                const seed = child.computeSeed();
+                if (closedSet.has(seed)) {
                     return;
                 }
 
                 const tentativeGScore = gScore.get(current)! + 1;
-                if (!open.includes(child)) {
+                if (!openSet.has(seed)) {
                     open.push(child);
+                    openSet.add(seed);
                 } else if (tentativeGScore >= gScore.get(child)!) {
                     return;
                 }
