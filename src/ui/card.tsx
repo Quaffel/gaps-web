@@ -12,7 +12,6 @@ function getAltTextForCard(card: Card | null): string {
 }
 
 interface CardTileProps {
-    width?: string | number;
     height?: string | number;
     isMoveable?: boolean;
     isCandidate?: boolean;
@@ -48,7 +47,7 @@ export function CardTile(props: CardTileProps): JSX.Element {
 
     return (
         <div
-        style={{ width: `${props.width ?? 100}%`, height: `${props.height ?? 100}vh` }}
+        style={{ height: `${props.height ?? 100}vh` }}
         className={classes.join(" ")}
         onClick={() => props.onSelect?.()}>
             {imageElement}
