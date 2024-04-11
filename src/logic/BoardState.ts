@@ -104,7 +104,7 @@ export class BoardState {
         for (let i = 0; i < this._state.length; i++) {
             for (let j = 0; j <  this._state[i].length; j++) {
                 if (this._state[i][j]?.rank === this.lastRank) {
-                    this._state[i][j] = null;
+                    this.setCardAt({ row: i, column: j }, null);
                 }
             }
         }
@@ -269,6 +269,10 @@ export class BoardState {
             if (previousColumn < 0) {
                 return false;
             }
+            // const emptyToTheEnd = this._state[gap.row].slice(gap.column).every(card => card === null);
+            // if (emptyToTheEnd) {
+            //     return false;
+            // }
 
             const previousCard = this.getCardAt({ row: gap.row, column: previousColumn });
             if (previousCard === null) {
@@ -332,7 +336,7 @@ export class BoardState {
             open.sort((a, b) => fScore.get(a)! - fScore.get(b)!);
             const current = open.shift()!;
 
-            if (current.isSolved() || depth > maxDepth) {
+            if (current.isSolved() || open.length >= maxDepth) {
                 let path: BoardState[] = [current];
                 let state = current;
                 while (cameFrom.has(state)) {
@@ -342,7 +346,6 @@ export class BoardState {
                 return Promise.resolve(path);
             }
 
-            depth++;
             closed.push(current);
             closedSet.add(current.computeSeed());
             const children = current.getChildren();
