@@ -18,10 +18,6 @@ async function wait(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function waitNextTick() {
-    return new Promise((resolve) => requestAnimationFrame(resolve));
-}
-
 function Index() {
     const [rows, setRows] = React.useState(board.rows);
     const [columns, setColumns] = React.useState(board.columns);
@@ -158,7 +154,7 @@ function Index() {
         initializeBoard(newRows, columns);
     }
 
-    function handleChangeSeed(e: any) {
+    function handleChangeSeed(_: any) {
         const seedElement = document.getElementById("seed") as HTMLInputElement;
         setSeed(seedElement.value);
         board.loadSeed(seedElement.value);

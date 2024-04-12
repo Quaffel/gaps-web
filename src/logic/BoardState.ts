@@ -1,6 +1,6 @@
 import { Rank, Ranks } from './Rank';
 import { Suit, Suits } from './Suit';
-import { CardPosition, Swap, Card } from './Card';
+import { CardPosition, Card } from './Card';
 
 
 export class BoardState {
@@ -327,7 +327,6 @@ export class BoardState {
         const gScore = new Map<BoardState, number>();
         const fScore = new Map<BoardState, number>();
         const cameFrom = new Map<BoardState, BoardState | null>();
-        let depth = 0;
 
         gScore.set(this, 0);
         fScore.set(this, heuristic(this));
