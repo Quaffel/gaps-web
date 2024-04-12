@@ -6,14 +6,14 @@ on:
   workflow_call:
 
 env:
-  NODE_VERSION: 18.x
+  NODE_VERSION: 20.x
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Use Node.js ${{ env.NODE_VERSION }}
       uses: actions/setup-node@v3
@@ -26,7 +26,7 @@ jobs:
         npm run build
 
     - name: Upload optimized build as artifact
-      uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-pages-artifact@v3.1
       with:
         name: opt-build
         path: build/
