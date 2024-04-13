@@ -278,7 +278,7 @@ function Index() {
                     </div>
 
                     <div className="form-group">
-                        <label>Max depth</label>
+                        <label>Algorithm complexity (A*: max closed nodes, MCTS: max iterations)</label>
                         <input
                             placeholder="How deep the search should go"
                             disabled={loading}
