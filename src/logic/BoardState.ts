@@ -405,7 +405,6 @@ export class BoardState implements State<Move> {
         const gScore = new Map<BoardState, number>();
         const fScore = new Map<BoardState, number>();
         const cameFrom = new Map<BoardState, BoardState | null>();
-        let depth = 0;
 
         gScore.set(this, 0);
         fScore.set(this, heuristic(this));
