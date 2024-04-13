@@ -218,7 +218,7 @@ function Index() {
                 selectedCard={selectedCard}
                 handleCardSelect={handleCardSelect}
             />
-            <div className="py-5 flex justify-center align-center flex-column gap-2">
+            <div className="px-3 py-5 flex justify-center align-center flex-column gap-2">
                 <div className="controls">
                     <div>
                         <div className="bold">Seed</div>
