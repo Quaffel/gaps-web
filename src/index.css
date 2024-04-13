@@ -17,7 +17,7 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 
@@ -59,6 +59,19 @@ input[type="text"], input[type="password"], input[type="number"] {
     background: #e7e7e7;
     border-radius: var(--border-radius);
     flex: 1;
+    border: 3px solid transparent;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+input[type="text"]:disabled, input[type="password"]:disabled, input[type="number"]:disabled {
+    background: #f0f0f0;
+    color: #a0a0a0;
+    cursor: not-allowed;
 }
 
 .form-group {
@@ -234,4 +247,12 @@ label {
 
 .bold {
     font-weight: bold;
+}
+
+.small-text {
+    font-size: 0.8rem;
+}
+
+label {
+    margin-bottom: 0.2rem;
 }

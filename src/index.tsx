@@ -218,7 +218,9 @@ function Index() {
                 selectedCard={selectedCard}
                 handleCardSelect={handleCardSelect}
             />
-            <div className="px-3 py-5 flex justify-center align-center flex-column gap-2">
+            <div className="px-3 py-5 flex justify-center align-center flex-column gap-3">
+                {loading && <p className="bold">Loading...</p>}
+
                 <div className="controls">
                     <div>
                         <div className="bold">Seed</div>
@@ -233,7 +235,7 @@ function Index() {
                         <div>{score.toFixed(2)}</div>
                     </div>
                 </div>
-                {loading && <p>Loading...</p>}
+
                 <div className="form-group flex-row gap-2">
                     <button disabled={loading} onClick={() => initializeBoard()}>Reset</button>
                     <button disabled={loading} onClick={shuffleBoard}>Shuffle</button>
@@ -242,7 +244,7 @@ function Index() {
                     <button disabled={loading} onClick={() => console.log(board.getChildren())}>Console log children</button>
                 </div>
                 
-                <div className="flex flex-column gap-1 controls">
+                <div className="flex flex-column gap-2 controls">
                     <div className="form-group flex-row">
                         <label>Verify valid move</label>
                         <input
@@ -278,7 +280,8 @@ function Index() {
                     </div>
 
                     <div className="form-group">
-                        <label>Algorithm complexity (A*: max closed nodes, MCTS: max iterations)</label>
+                        <label>Algorithm complexity</label>
+                        <div className="small-text">(A*: max closed nodes, MCTS: max iterations)</div>
                         <input
                             placeholder="How deep the search should go"
                             disabled={loading}
