@@ -179,7 +179,7 @@ function Index() {
         initializeBoard(newRows, columns);
     }
 
-    function handleChangeSeed(e: any) {
+    function handleChangeSeed() {
         const seedElement = document.getElementById("seed") as HTMLInputElement;
         setSeed(seedElement.value);
         board.loadSeed(seedElement.value);
