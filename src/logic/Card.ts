@@ -11,7 +11,7 @@ export interface CardPosition {
     column: number,
 }
 
-export interface Swap {
+export interface Move {
     from: CardPosition,
     to: CardPosition,
 }
