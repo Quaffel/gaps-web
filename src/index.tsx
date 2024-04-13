@@ -185,13 +185,30 @@ function Index() {
         board.loadSeed(seedElement.value);
     }
 
+    function handleChangeMaxDepth(e: React.ChangeEvent<HTMLInputElement>) {
+        const newMaxDepth = Number(e.target.value);
+        if (Number.isNaN(newMaxDepth)) {
+            return;
+        }
+        if (newMaxDepth < 1) {
+            return;
+        }
+        setMaxDepth(newMaxDepth);
+    }
+
+    function handleChangeAnimationDelay(e: React.ChangeEvent<HTMLInputElement>) {
+        const newAnimationDelay = Number(e.target.value);
+        if (Number.isNaN(newAnimationDelay)) {
+            return;
+        }
+        if (newAnimationDelay < 0) {
+            return;
+        }
+        setAnimationDelay(newAnimationDelay);
+    }
+
     return (
-        <div>
-            <div>
-                <p>{seed}</p>
-                <p>{missPlacedCardsCount}</p>
-                <p>{score}</p>
-            </div>
+        <div className="py-3">
             <Board
                 state={state}
                 rows={rows}
@@ -201,15 +218,32 @@ function Index() {
                 selectedCard={selectedCard}
                 handleCardSelect={handleCardSelect}
             />
-            <div>
-                {loading && <p>Loading...</p>}
-                <button disabled={loading} onClick={() => initializeBoard()}>Reset</button>
-                <button disabled={loading} onClick={shuffleBoard}>Shuffle</button>
-                <button disabled={loading} onClick={performAStar}>A*</button>
-                <button disabled={loading} onClick={performMCTS}>MCTS</button>
-                <button disabled={loading} onClick={() => console.log(board.getChildren())}>Console log children</button>
-                <div>
+            <div className="py-5 flex justify-center align-center flex-column gap-2">
+                <div className="controls">
                     <div>
+                        <div className="bold">Seed</div>
+                        <div>{seed}</div>
+                    </div>
+                    <div>
+                        <div className="bold">Miss placed cards</div>
+                        <div>{missPlacedCardsCount}</div>
+                    </div>
+                    <div>
+                        <div className="bold">Score</div>
+                        <div>{score.toFixed(2)}</div>
+                    </div>
+                </div>
+                {loading && <p>Loading...</p>}
+                <div className="form-group flex-row gap-2">
+                    <button disabled={loading} onClick={() => initializeBoard()}>Reset</button>
+                    <button disabled={loading} onClick={shuffleBoard}>Shuffle</button>
+                    <button disabled={loading} onClick={performAStar}>A*</button>
+                    <button disabled={loading} onClick={performMCTS}>MCTS</button>
+                    <button disabled={loading} onClick={() => console.log(board.getChildren())}>Console log children</button>
+                </div>
+                
+                <div className="flex flex-column gap-1 controls">
+                    <div className="form-group flex-row">
                         <label>Verify valid move</label>
                         <input
                             disabled={loading} 
@@ -219,9 +253,10 @@ function Index() {
                         />
                     </div>
 
-                    <div>
+                    <div className="form-group">
                         <label>Rows</label>
                         <input
+                            placeholder="from 1 to 4"
                             disabled={loading}
                             type="text"
                             pattern="[0-9]*"
@@ -230,9 +265,10 @@ function Index() {
                         />
                     </div>
 
-                    <div>
+                    <div className="form-group">
                         <label>Columns</label>
                         <input
+                            placeholder="from 1 to 13"
                             disabled={loading}
                             type="text"
                             pattern="[0-9]*"
@@ -241,29 +277,35 @@ function Index() {
                         />
                     </div>
 
-                    <div>
+                    <div className="form-group">
                         <label>Max depth</label>
                         <input
+                            placeholder="How deep the search should go"
                             disabled={loading}
-                            type="number"
+                            type="text"
+                            pattern="[0-9]*"
                             value={maxDepth}
-                            onChange={(e) => setMaxDepth(Number(e.target.value))}
+                            onChange={handleChangeMaxDepth}
                         />
                     </div>
 
-                    <div>
+                    <div className="form-group">
                         <label>Animation delay</label>
                         <input
+                            placeholder="How long the animation should last"
                             disabled={loading}
                             type="number"
                             value={animationDelay}
-                            onChange={(e) => setAnimationDelay(Number(e.target.value))}
+                            onChange={handleChangeAnimationDelay}
                         />
                     </div>
 
-                    <div>
-                        <input disabled={loading} type="text" id="seed"/>
-                        <button disabled={loading} onClick={handleChangeSeed}>Load seed</button>
+                    <div className="form-group">
+                        <label htmlFor="seed">Seed</label>
+                        <div className="flex width-100 flex-1 flex-row gap-1">
+                            <input placeholder={seed} disabled={loading} type="text" id="seed"/>
+                            <button disabled={loading} onClick={handleChangeSeed}>Load seed</button>
+                        </div>
                     </div>
                 </div>
             </div>

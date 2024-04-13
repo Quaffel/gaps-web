@@ -3,7 +3,9 @@
     margin: 4px;
     justify-content: center;
     align-items: center;
-    max-height: 100%;
+    aspect-ratio: 167 / 243;
+    min-width: 4rem;
+    max-height: 8rem;
 }
 
 .card-back {
