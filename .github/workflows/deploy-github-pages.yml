@@ -1,13 +1,10 @@
-name: 
+name: Deploy optimized build to GitHub Pages
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
-env:
-  NODE_VERSION: 18.x
 
 jobs:
   build:
