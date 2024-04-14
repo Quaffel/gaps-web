@@ -16,9 +16,9 @@ interface BoardProps {
 export function Board(props: BoardProps): JSX.Element{
     return (
         <div className="board-container">  
-            <div className="board" style={{aspectRatio: `${props.columns} / ${props.rows}`}}>
+            <div className="board">
                 {props.state.map((row, rowIdx) => (
-                    <div style={{height: `${70 / props.rows}vh`}} className="card-row" key={rowIdx}> 
+                    <div className="card-row" key={rowIdx}> 
                         {row.map((it, columnIdx) => (
                             <CardTile
                                 height={70 / props.rows}

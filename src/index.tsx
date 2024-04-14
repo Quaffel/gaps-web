@@ -2,9 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Board } from "./ui/board";
 import { BoardState } from "./logic/BoardState";
-import { Card, CardPosition } from "./logic/Card";
+import { Card, CardPosition, Move } from "./logic/Card";
 
 import "./index.css";
+import { MCTS } from "./logic/MCTS";
+import { AStar } from "./logic/AStar";
+import { State } from "./logic/State";
 
 const board = new BoardState(4, 13);
 const loadedSeed = localStorage.getItem("seed");
@@ -19,8 +22,8 @@ async function wait(ms: number) {
 }
 
 function Index() {
-    const [rows, setRows] = React.useState(board.rows);
-    const [columns, setColumns] = React.useState(board.columns);
+    const [rows, setRows] = React.useState(board.getRows());
+    const [columns, setColumns] = React.useState(board.getColumns());
     const [selectedCard, setSelectedCard] = React.useState<CardPosition | null>(
         null
     );
@@ -28,73 +31,100 @@ function Index() {
         []
     );
     const [possibleGaps, setPossibleGaps] = React.useState<CardPosition[]>([]);
-    const [state, setState] = React.useState(board.state);
+    const [state, setState] = React.useState(board.getState());
     const [verifyValidMove, setVerifyValidMove] = React.useState<boolean>(false);
-    const [seed, setSeed] = React.useState(board.computeSeed());
+    const [seed, setSeed] = React.useState(board.getSeed());
     const [loading, setLoading] = React.useState(false);
     const [missPlacedCardsCount, setMissPlacedCardsCount] = React.useState(0);
-    const [maxDepth, setMaxDepth] = React.useState(15000);
-    const [animationDelay, setAnimationDelay] = React.useState(200);
+    const [maxDepth, setMaxDepth] = React.useState(10000);
+    const [animationDelay, setAnimationDelay] = React.useState(50);
+    const [score, setScore] = React.useState(0);
 
     React.useEffect(() => {
         board.onUpdate = () => {
-            const size = board.rows * board.columns;
-            setState([...board.state]);
+            const rows = board.getRows();
+            const columns = board.getColumns();
+            const size = board.getSize();
+            setState([...board.getState()]);
+            setScore(board.getScore());
             setMissPlacedCardsCount(size - board.getWellPlacedCards().length);
-            const seed = board.computeSeed();
+            const seed = board.getSeed();
             localStorage.setItem("seed", seed);
-            setSeed(board.computeSeed());
-            setRows(board.rows);
-            setColumns(board.columns);
+            setSeed(board.getSeed());
+            setRows(rows);
+            setColumns(columns);
             resetHand();
         };
 
-        const size = board.rows * board.columns;
+        const size = board.getSize();
         resetHand();
         setMissPlacedCardsCount(size - board.getWellPlacedCards().length);
-        document.getElementById("rows")!.setAttribute("value", String(board.rows));
-        document.getElementById("columns")!.setAttribute("value", String(board.columns));
+        setScore(board.getScore());
+        setSeed(board.getSeed());
+        document.getElementById("rows")!.setAttribute("value", String(board.getRows()));
+        document.getElementById("columns")!.setAttribute("value", String(board.getColumns()));
     }, []);
 
     function resetHand() {
-        setMoveableCards(board.getMoveableCards().map(({from}) => from));
+        setMoveableCards(board.getPossibleActions().map(({from}) => from));
         setPossibleGaps([]);
         setSelectedCard(null);
     }
 
     // 4.4 3.0 3.2 1.0 x.x 0.1 x.x 1.1 2.0 3.1 2.2 x.x 0.0 1.2 2.1 0.2 x.x
     async function performAStar() {
-        const size = board.rows * board.columns;
-        
         console.log(seed);
         setLoading(true);
         await wait(100)
 
-        const path = await board.aStar((bs) => {
+        const heuristicFn = (bs: State<Move>) => {
+            const board = bs as BoardState;
             const functions = [
-                size - bs.getWellPlacedCards().length,
-                bs.getStuckGaps().length,
-                bs.getDoubleGaps().length
+                board.getSize() - board.getWellPlacedCards().length,
+                board.getStuckGaps().length,
+                board.getDoubleGaps().length,
             ]
-            const weights = [3, 30, 1];
+            const weights = [3, 5, 1];
             return functions.reduce((acc, val, idx) => acc + val * weights[idx], 0);
-        }, maxDepth);
+        }
 
-        if (path.length === 0) {
-            setLoading(false);
+        const astar = new AStar.AStarSearch(board, maxDepth, heuristicFn);
+        const path = astar.findPath();
+
+        if (path === null) {
+            console.log("No solution found");
             return;
         }
 
-        const isSolved = path[path.length - 1].isSolved();
-        console.log(path, `isSolved: ${isSolved}`);
-        for (const p of path) {
-            board.load(p);
+        const lastState = path[path.length - 1] as BoardState;
+        console.log(`Solution found with score: ${lastState.getScore()}, is solved: ${lastState.isSolved()}`);
+
+        for (let i = 0; i < path.length; i++) {
+            board.load(path[i] as BoardState);
             await wait(animationDelay);
         }
+
         setLoading(false);
     }
 
-    function initializeBoard(rows: number = board.rows, columns: number = board.columns) {
+    async function performMCTS() {
+        console.log(seed);
+        setLoading(true);
+        await wait(100)
+
+        const mcts = new MCTS.MCTSSearch(board);
+
+        let nextMove = board;
+        while (board.isTerminal() === false) {
+            nextMove = await mcts.findNextMove(board, maxDepth) as BoardState;
+            board.load(nextMove);
+            await wait(animationDelay);
+        }
+
+        setLoading(false);
+    }
+
+    function initializeBoard(rows: number = board.getRows(), columns: number = board.getColumns()) {
         board.reset(rows, columns);
         board.removeHighestCards();
     }
@@ -104,7 +134,7 @@ function Index() {
     }
 
     function performMove(from: CardPosition, to: CardPosition) {
-        board.requestMove(from, to, verifyValidMove);
+        board.requestAction({from, to}, verifyValidMove);
     }
 
     function handleCardSelect(card: Card | null, position: CardPosition) {
@@ -154,20 +184,36 @@ function Index() {
         initializeBoard(newRows, columns);
     }
 
-    function handleChangeSeed(_: any) {
+    function handleChangeSeed() {
         const seedElement = document.getElementById("seed") as HTMLInputElement;
         setSeed(seedElement.value);
         board.loadSeed(seedElement.value);
     }
 
+    function handleChangeMaxDepth(e: React.ChangeEvent<HTMLInputElement>) {
+        const newMaxDepth = Number(e.target.value);
+        if (Number.isNaN(newMaxDepth)) {
+            return;
+        }
+        if (newMaxDepth < 1) {
+            return;
+        }
+        setMaxDepth(newMaxDepth);
+    }
+
+    function handleChangeAnimationDelay(e: React.ChangeEvent<HTMLInputElement>) {
+        const newAnimationDelay = Number(e.target.value);
+        if (Number.isNaN(newAnimationDelay)) {
+            return;
+        }
+        if (newAnimationDelay < 0) {
+            return;
+        }
+        setAnimationDelay(newAnimationDelay);
+    }
+
     return (
-        <div>
-            <div>
-                <p>{seed}</p>
-            </div>
-            <div>
-                <p>{missPlacedCardsCount}</p>
-            </div>
+        <div className="py-3">
             <Board
                 state={state}
                 rows={rows}
@@ -177,14 +223,34 @@ function Index() {
                 selectedCard={selectedCard}
                 handleCardSelect={handleCardSelect}
             />
-            <div>
-                {loading && <p>Loading...</p>}
-                <button disabled={loading} onClick={() => initializeBoard()}>Reset</button>
-                <button disabled={loading} onClick={shuffleBoard}>Shuffle</button>
-                <button disabled={loading} onClick={performAStar}>A*</button>
-                <button disabled={loading} onClick={() => console.log(board.getChildren())}>Console log children</button>
-                <div>
+            <div className="px-3 py-5 flex justify-center align-center flex-column gap-3">
+                {loading && <p className="bold">Loading...</p>}
+
+                <div className="controls">
                     <div>
+                        <div className="bold">Seed</div>
+                        <div>{seed}</div>
+                    </div>
+                    <div>
+                        <div className="bold">Miss placed cards</div>
+                        <div>{missPlacedCardsCount}</div>
+                    </div>
+                    <div>
+                        <div className="bold">Score</div>
+                        <div>{score.toFixed(2)}</div>
+                    </div>
+                </div>
+
+                <div className="form-group flex-row gap-2">
+                    <button disabled={loading} onClick={() => initializeBoard()}>Reset</button>
+                    <button disabled={loading} onClick={shuffleBoard}>Shuffle</button>
+                    <button disabled={loading} onClick={performAStar}>A*</button>
+                    <button disabled={loading} onClick={performMCTS}>MCTS</button>
+                    <button disabled={loading} onClick={() => console.log(board.getChildren())}>Console log children</button>
+                </div>
+                
+                <div className="flex flex-column gap-2 controls">
+                    <div className="form-group flex-row">
                         <label>Verify valid move</label>
                         <input
                             disabled={loading} 
@@ -194,9 +260,10 @@ function Index() {
                         />
                     </div>
 
-                    <div>
+                    <div className="form-group">
                         <label>Rows</label>
                         <input
+                            placeholder="from 1 to 4"
                             disabled={loading}
                             type="text"
                             pattern="[0-9]*"
@@ -205,9 +272,10 @@ function Index() {
                         />
                     </div>
 
-                    <div>
+                    <div className="form-group">
                         <label>Columns</label>
                         <input
+                            placeholder="from 1 to 13"
                             disabled={loading}
                             type="text"
                             pattern="[0-9]*"
@@ -216,45 +284,39 @@ function Index() {
                         />
                     </div>
 
-                    <div>
-                        <label>Max depth</label>
+                    <div className="form-group">
+                        <label>Algorithm complexity</label>
+                        <div className="small-text">(A*: max closed nodes, MCTS: max iterations)</div>
                         <input
+                            placeholder="How deep the search should go"
                             disabled={loading}
-                            type="number"
+                            type="text"
+                            pattern="[0-9]*"
                             value={maxDepth}
-                            onChange={(e) => setMaxDepth(Number(e.target.value))}
+                            onChange={handleChangeMaxDepth}
                         />
                     </div>
 
-                    <div>
+                    <div className="form-group">
                         <label>Animation delay</label>
                         <input
+                            placeholder="How long the animation should last"
                             disabled={loading}
                             type="number"
                             value={animationDelay}
-                            onChange={(e) => setAnimationDelay(Number(e.target.value))}
+                            onChange={handleChangeAnimationDelay}
                         />
                     </div>
 
-                    <div>
-                        <input disabled={loading} type="text" id="seed"/>
-                        <button disabled={loading} onClick={handleChangeSeed}>Load seed</button>
+                    <div className="form-group">
+                        <label htmlFor="seed">Seed</label>
+                        <div className="flex width-100 flex-1 flex-row gap-1">
+                            <input placeholder={seed} disabled={loading} type="text" id="seed"/>
+                            <button disabled={loading} onClick={handleChangeSeed}>Load seed</button>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            {/* <hr/>
-
-            <span style={{ opacity: .5 }}>
-                <Board
-                    state={state}
-                    rows={rows}
-                    columns={columns}
-                    moveableCards={moveableCards}
-                    possibleGaps={possibleGaps}
-                    selectedCard={selectedCard}
-                />
-            </span> */}
         </div>
     );
 }

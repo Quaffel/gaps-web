@@ -47,7 +47,6 @@ export function CardTile(props: CardTileProps): JSX.Element {
 
     return (
         <div
-        style={{ height: `${props.height ?? 100}vh` }}
         className={classes.join(" ")}
         onClick={() => props.onSelect?.()}>
             {imageElement}
