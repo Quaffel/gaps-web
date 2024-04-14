@@ -59,6 +59,8 @@ function Index() {
         const size = board.getSize();
         resetHand();
         setMissPlacedCardsCount(size - board.getWellPlacedCards().length);
+        setScore(board.getScore());
+        setSeed(board.getSeed());
         document.getElementById("rows")!.setAttribute("value", String(board.getRows()));
         document.getElementById("columns")!.setAttribute("value", String(board.getColumns()));
     }, []);
@@ -82,7 +84,7 @@ function Index() {
                 board.getStuckGaps().length,
                 board.getDoubleGaps().length,
             ]
-            const weights = [2, 1000, 1];
+            const weights = [3, 5, 1];
             return functions.reduce((acc, val, idx) => acc + val * weights[idx], 0);
         }
 
@@ -93,6 +95,9 @@ function Index() {
             console.log("No solution found");
             return;
         }
+
+        const lastState = path[path.length - 1] as BoardState;
+        console.log(`Solution found with score: ${lastState.getScore()}, is solved: ${lastState.isSolved()}`);
 
         for (let i = 0; i < path.length; i++) {
             board.load(path[i] as BoardState);

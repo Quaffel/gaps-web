@@ -55,7 +55,7 @@ export namespace AStar {
         }
 
         findPath(): State<ActionType>[] | null {
-            while (this._openSet.length > 0) {
+            while (this._openSet.length > 0 && this._openSet.length < this._maxDepth) {
                 // Sort openSet by f value and pick the node with the lowest f
                 this._openSet.sort((a, b) => a.f - b.f);
                 let currentNode = this._openSet.shift()!;
@@ -67,27 +67,30 @@ export namespace AStar {
 
                 this._closedSet.add(currentNode.state.hash());
 
-                if (this._closedSet.size < this._maxDepth) {
-                    currentNode.state.getPossibleActions().forEach(action => {
-                        let newState = currentNode.state.clone();
-                        newState.requestAction(action, true);
-                        if (this._closedSet.has(newState.hash())) {
-                            return; // Skip expansion if the new state is already in closedSet
-                        }
-                        let newG = currentNode.g + 1;
-                        let newH = this._heuristicFn(newState);
-                        let newNode = new Node(newState, currentNode, action, newG, newH, currentNode.depth + 1);
+                currentNode.state.getPossibleActions().forEach(action => {
+                    let newState = currentNode.state.clone();
+                    newState.requestAction(action, false);
+                    const hash = newState.hash();
 
-                        // Check if the new node is the best node found so far
-                        if (this._bestNode == null || newNode.f < this._bestNode.f) {
-                            this._bestNode = newNode;
-                        }
+                    if (this._closedSet.has(hash)) {
+                        return; // Skip expansion if the new state is already in closedSet
+                    }
+                    
+                    let newG = currentNode.g + 1;
+                    let newH = this._heuristicFn(newState);
+                    let newNode = new Node(newState, currentNode, action, newG, newH, currentNode.depth + 1);
 
-                        if (!this._openSet.some(n => n.state.equals(newState) && n.g <= newG)) {
-                            this._openSet.push(newNode);
-                        }
-                    });
-                }
+                    // Check if the new node is the best node found so far
+                    if (this._bestNode == null || newNode.f < this._bestNode.f) {
+                        this._bestNode = newNode;
+                    }
+
+                    if (!this._openSet.some(n => n.state.equals(newState) && n.g <= newG)) {
+                        this._openSet.push(newNode);
+                    } else {
+                        return; // Skip expansion if the new state is already in openSet with a lower g value
+                    }
+                });
             }
 
             if (this._bestNode != null) {
