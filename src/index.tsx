@@ -14,10 +14,18 @@ const loadedSeed = localStorage.getItem("seed");
 const loadedMaxDepth = localStorage.getItem("maxDepth") || 10000;
 const loadedAnimationDelay = localStorage.getItem("animationDelay") || 50;
 
-const loadedShowHighlightStr = localStorage.getItem("showHighlight") 
+let loadedShowHighlightStr = localStorage.getItem("showHighlight")
+if (loadedShowHighlightStr === null) {
+    localStorage.setItem("showHighlight", "true");
+    loadedShowHighlightStr = "true";
+}
 const loadedShowHighlight = loadedShowHighlightStr === "true" ? true : false;
 
-const loadedVerifyValidMoveStr = localStorage.getItem("verifyValidMove")
+let loadedVerifyValidMoveStr = localStorage.getItem("verifyValidMove");
+if (loadedVerifyValidMoveStr === null) {
+    localStorage.setItem("verifyValidMove", "true");
+    loadedVerifyValidMoveStr = "true";
+}
 const loadedVerifyValidMove = loadedVerifyValidMoveStr === "true" ? true : false;
 
 if (loadedSeed !== null) {
