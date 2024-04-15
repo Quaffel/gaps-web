@@ -18,6 +18,7 @@ interface CardTileProps {
     card: Card | null;
     isSelected?: boolean;
     onSelect?: () => void;
+    showHighlight?: boolean;
 }
 
 export function CardTile(props: CardTileProps): JSX.Element {
@@ -29,10 +30,12 @@ export function CardTile(props: CardTileProps): JSX.Element {
     }
 
     let classes = ["card"];
-    if (props.isSelected || props.isMoveable) {
+    if (props.isSelected || (props.isMoveable && props.showHighlight)) {
         classes.push("selected");
     } else if (props.isCandidate) {
-        classes.push("candidate");
+        if (props.showHighlight) {
+            classes.push("candidate");
+        }
     }
 
     const imageElement = (() => {

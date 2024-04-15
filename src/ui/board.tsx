@@ -11,6 +11,7 @@ interface BoardProps {
     possibleGaps: CardPosition[];
     selectedCard: CardPosition | null;
     handleCardSelect?: (card: Card | null, position: CardPosition) => void;
+    showHighlight?: boolean;
 }
 
 export function Board(props: BoardProps): JSX.Element{
@@ -21,6 +22,7 @@ export function Board(props: BoardProps): JSX.Element{
                     <div className="card-row" key={rowIdx}> 
                         {row.map((it, columnIdx) => (
                             <CardTile
+                                showHighlight={props.showHighlight}
                                 height={70 / props.rows}
                                 isCandidate={props.possibleGaps.some((gap) => gap.row === rowIdx && gap.column === columnIdx)}
                                 isMoveable={props.moveableCards.some((moveable) => moveable.row === rowIdx && moveable.column === columnIdx)}

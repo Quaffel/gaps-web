@@ -11,6 +11,15 @@ import { State } from "./logic/State";
 
 const board = new BoardState(4, 13);
 const loadedSeed = localStorage.getItem("seed");
+const loadedMaxDepth = localStorage.getItem("maxDepth") || 10000;
+const loadedAnimationDelay = localStorage.getItem("animationDelay") || 50;
+
+const loadedShowHighlightStr = localStorage.getItem("showHighlight") 
+const loadedShowHighlight = loadedShowHighlightStr === "true" ? true : false;
+
+const loadedVerifyValidMoveStr = localStorage.getItem("verifyValidMove")
+const loadedVerifyValidMove = loadedVerifyValidMoveStr === "true" ? true : false;
+
 if (loadedSeed !== null) {
     board.loadSeed(loadedSeed);
 } else {
@@ -32,13 +41,14 @@ function Index() {
     );
     const [possibleGaps, setPossibleGaps] = React.useState<CardPosition[]>([]);
     const [state, setState] = React.useState(board.getState());
-    const [verifyValidMove, setVerifyValidMove] = React.useState<boolean>(false);
+    const [verifyValidMove, setVerifyValidMove] = React.useState<boolean>(Boolean(loadedVerifyValidMove));
     const [seed, setSeed] = React.useState(board.getSeed());
     const [loading, setLoading] = React.useState(false);
     const [missPlacedCardsCount, setMissPlacedCardsCount] = React.useState(0);
-    const [maxDepth, setMaxDepth] = React.useState(10000);
-    const [animationDelay, setAnimationDelay] = React.useState(50);
+    const [maxDepth, setMaxDepth] = React.useState(Number(loadedMaxDepth));
+    const [animationDelay, setAnimationDelay] = React.useState(Number(loadedAnimationDelay));
     const [score, setScore] = React.useState(0);
+    const [showHighlight, setShowHighlight] = React.useState(Boolean(loadedShowHighlight));
 
     React.useEffect(() => {
         board.onUpdate = () => {
@@ -139,7 +149,9 @@ function Index() {
 
     function handleCardSelect(card: Card | null, position: CardPosition) {
         if (card === null) {
-            performMove(selectedCard!, position);
+            if (selectedCard !== null) {
+                performMove(selectedCard!, position);
+            }
             return;
         }
 
@@ -198,6 +210,7 @@ function Index() {
         if (newMaxDepth < 1) {
             return;
         }
+        localStorage.setItem("maxDepth", String(newMaxDepth));
         setMaxDepth(newMaxDepth);
     }
 
@@ -209,7 +222,18 @@ function Index() {
         if (newAnimationDelay < 0) {
             return;
         }
+        localStorage.setItem("animationDelay", String(newAnimationDelay));
         setAnimationDelay(newAnimationDelay);
+    }
+
+    function handleChangeShowHighlight(e: React.ChangeEvent<HTMLInputElement>) {
+        setShowHighlight(e.target.checked);
+        localStorage.setItem("showHighlight", String(e.target.checked));
+    }
+
+    function handleChangeVerifyValidMove(e: React.ChangeEvent<HTMLInputElement>) {
+        setVerifyValidMove(e.target.checked);
+        localStorage.setItem("verifyValidMove", String(e.target.checked));
     }
 
     return (
@@ -222,6 +246,7 @@ function Index() {
                 possibleGaps={possibleGaps}
                 selectedCard={selectedCard}
                 handleCardSelect={handleCardSelect}
+                showHighlight={showHighlight}
             />
             <div className="px-3 py-5 flex justify-center align-center flex-column gap-3">
                 {loading && <p className="bold">Loading...</p>}
@@ -256,7 +281,17 @@ function Index() {
                             disabled={loading} 
                             type="checkbox"
                             checked={verifyValidMove}
-                            onChange={(e) => setVerifyValidMove(e.target.checked)}
+                            onChange={handleChangeVerifyValidMove}
+                        />
+                    </div>
+
+                    <div className="form-group flex-row">
+                        <label>Show highlight</label>
+                        <input
+                            disabled={loading} 
+                            type="checkbox"
+                            checked={showHighlight}
+                            onChange={handleChangeShowHighlight}
                         />
                     </div>
 
