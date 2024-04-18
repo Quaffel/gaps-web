@@ -75,7 +75,7 @@ export function Game({
             },
             ...swapCandidates.map(it => ({
                 spot: it,
-                highlight: 'candidate' as const,
+                highlight: 'swap-candidate' as const,
             }))
         ]
     }, [selectedCardPosition]);

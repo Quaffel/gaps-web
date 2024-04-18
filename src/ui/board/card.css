@@ -16,12 +16,12 @@
     max-width: 100%;
 }
 
-.card.card.card-highlight-candidate img {
+.card.card-highlight-selection img {
     box-shadow: rgba(245, 167, 72, 1) 2px 3px 10px;
     border: 2px rgba(245, 167, 72, 1) solid;
 }
 
-.card.card-highlight-selection img {
+.card.card-highlight-swap-candidate img {
     box-shadow: rgba(228, 23, 23, 1) 2px 3px 10px;
     border: 2px rgba(228, 23, 23, 1) solid;
 }

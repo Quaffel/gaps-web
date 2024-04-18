@@ -68,7 +68,7 @@ export function PlaybackBoard({
             highlight: 'selection',
         }, {
             spot: swap.to,
-            highlight: 'candidate',
+            highlight: 'swap-candidate',
         }];
     }
 

@@ -13,7 +13,7 @@ function getAltTextForCard(card: Card | null): string {
 
 export interface CardSpotState {
     card: Card | null,
-    highlight: 'selection' | 'candidate' | 'none',
+    highlight: 'selection' | 'selection-candidate' | 'swap-candidate' | 'none',
 }
 
 export function CardTile({
@@ -31,7 +31,8 @@ export function CardTile({
     let classes = ["card"]
 
     const highlightClass = {
-        "candidate": "card-highlight-candidate",
+        "swap-candidate": "card-highlight-swap-candidate",
+        "selection-candidate": "card-highlight-selection",
         "selection": "card-highlight-selection",
         "none": null
     }[spotState.highlight]
