@@ -1,9 +1,10 @@
-import { Board, Card, RankValues, SuitValues } from "../cards";
+import { Card, RANKS, SUITS } from "../cards";
+import { Board } from "../board";
 import { Swap } from "../ui/game";
 import { GamePlayback } from "../ui/game-playback";
 
 // Same board as in './game.tsx'.
-const sampleInitialBoard: Board<Card | null> = SuitValues.map(suit => RankValues.map(rank => ({
+const sampleInitialBoard: Board<Card | null> = SUITS.map(suit => RANKS.map(rank => ({
     rank, suit
 })));
 

@@ -1,5 +1,6 @@
 import React from "react";
-import { Board, Card } from "../cards";
+import { Board } from "../board";
+import { Card } from "../cards";
 import { Swap } from "./game";
 import { DisplayState, PlaybackBoard, PlaybackControlsBar } from "./playback";
 

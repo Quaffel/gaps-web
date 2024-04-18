@@ -1,5 +1,6 @@
 import React from "react";
-import { Board, Card } from "../cards";
+import { Card } from "../cards";
+import { Board } from "../board";
 import { ComponentType } from "../util/types";
 import { Highlight, HighlightedBoard } from "./board/board";
 import { Swap } from "./game";

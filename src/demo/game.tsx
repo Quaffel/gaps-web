@@ -1,11 +1,12 @@
-import { Board, Card, RankValues, SuitValues } from "../cards";
+import { Card, RANKS, SUITS } from "../cards";
+import { Board } from "../board";
 import { CardPosition, Game, Swap } from "../ui/game";
 
 // A board is a nested array, whereby the outer array represents the rows and the inner array the columns.
 // A value of type 'Card' represents an actual card, 'null' represents an empty spot.
 // Here, we generate a board on which all cards of the same suit (hearts, spades, ...) are in the same row and
 // its ranks are sorted in ascending order.
-const testBoardState: Board<Card | null> = SuitValues.map(suit => RankValues.map(rank => ({
+const testBoardState: Board<Card | null> = SUITS.map(suit => RANKS.map(rank => ({
     rank, suit
 })));
 
