@@ -10,6 +10,9 @@ namespace FeatherIcons {
         'skip-forward', 'skip-back',
         'disc',
         'star', 'github',
+        'refresh',
+        'share',
+        'settings',
     ] as const;
 
     export type Variants = ComponentType<typeof VariantValues>;

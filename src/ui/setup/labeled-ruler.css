@@ -1,0 +1,14 @@
+.labeled-ruler {
+    display: flex;
+    align-items: center;
+
+    margin-inline: 2rem;
+
+    & > hr {
+        flex-grow: 1;
+    }
+
+    & > span {
+        margin-inline: 2rem;
+    }
+}

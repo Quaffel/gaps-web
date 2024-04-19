@@ -6,6 +6,7 @@ import { PlaybackDemo } from './demo/playback';
 import { SelectionDisplay, WithSelector } from './ui/menu/selection';
 import { SelectionBar } from './ui/menu/selection-bar';
 import { getResourcePath } from './ui/resources';
+import { GameSession } from './ui/session';
 
 import './index.css';
 
@@ -16,6 +17,11 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <WithSelector options={[
+            {
+                label: "Configuration demo",
+                icon: 'icon-feather/settings',
+                content: () => <GameSession />
+            },
             {
                 label: "Play yourself",
                 icon: 'icon-feather/play',
