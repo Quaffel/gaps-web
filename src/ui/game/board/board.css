@@ -5,6 +5,5 @@
     flex-direction: column;
     align-items: flex-start;
 
-    overflow-x: scroll;
     gap: 1rem;
 }

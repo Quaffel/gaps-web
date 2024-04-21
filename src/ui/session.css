@@ -4,9 +4,10 @@
 
     flex-grow: 1;
 
-    align-items: center;
+    overflow-x: scroll;
 
     & > * {
         flex-grow: 1;
+        margin-inline: auto;
     }
 }
