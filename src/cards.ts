@@ -17,14 +17,19 @@ export function getSuitCardinality(suit: Suit): number {
 }
 
 const ranksCardinality = {
-    '7': 0,
-    '8': 1,
-    '9': 2,
-    '10': 3,
-    'jack': 4,
-    'queen': 5,
-    'king': 6,
-    'ace': 7
+    'ace': 0,
+    '2': 1,
+    '3': 2,
+    '4': 3,
+    '5': 4,
+    '6': 5,
+    '7': 6,
+    '8': 7,
+    '9': 8,
+    '10': 9,
+    'jack': 10,
+    'queen': 11,
+    'king': 12,
 } as const;
 
 export type Rank = keyof typeof ranksCardinality;
