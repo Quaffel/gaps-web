@@ -10,36 +10,43 @@ export function buildIntegerRangeValidator(valueRange: { min: number, max: numbe
     }
 }
 
-/*export function ValidatedTextInput({
+export function useValidatedTextInput({
     validator,
     hint,
     placeholder,
 }: {
-    validator: Validator,
+    validator: Validator<string>,
     hint?: string,
     placeholder?: string,
 }): [JSX.Element, string | null] {
-    const [content, setContent] = React.useState("");
+    const [content, setContent] = React.useState<{
+        text: string,
+        validValueOrNull: string | null,
+    }>({ text: "", validValueOrNull: null });
+
     const element = React.useRef<HTMLInputElement | null>(null)
 
-    const valid = React.useMemo(() => {
-        return validator(content);
-    }, [validator, content]);
-
     function handleContentChange(updatedContent: string) {
-        setContent(updatedContent);
-        element.current.setValid
+        // TODO: Debounce calls to validator
+        const valid = validator(updatedContent);
+
+        setContent({
+            text: updatedContent,
+            validValueOrNull: valid ? updatedContent : null,
+        });
+
+        element.current?.setCustomValidity(valid ? "" : (hint ?? "invalid"));
     }
 
     const inputElement = <input
         placeholder={placeholder}
         type="text"
         ref={element}
-        onInput={e => handleContentChange(e.currentTarget.textContent!)}
+        onInput={e => handleContentChange(e.currentTarget.value!)}
     />
 
-    return [inputElement, valid ? content : null];
-}*/
+    return [inputElement, content.validValueOrNull];
+}
 
 
 export function useValidatedNumberInput({

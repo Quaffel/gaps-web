@@ -6,15 +6,27 @@ import { Move } from "../game";
 import { generateShuffledBoard } from "../logic/generation";
 import { solitaireGapsRules } from "../logic/rules";
 import { Game } from "../ui/game/integration/game";
+import { getBoardOfSeed } from "../ui/game/setup/seed";
+
+function generateInitialBoard(configuration: Configuration): Board<Card | null> {
+    switch (configuration.boardGeneration.method) {
+        case 'random':
+            return generateShuffledBoard(configuration.boardGeneration.dimensions);
+        case 'seed':
+            const board = getBoardOfSeed(configuration.boardGeneration.seed);
+            if (board === null)
+                throw new Error("specified seed is invalid");
+
+            return board;
+    }
+}
 
 export function GameDemo({
     configuration
 }: {
     configuration: Configuration,
 }) {
-    const [board, setBoard] = React.useState<Board<Card | null>>(() => {
-        return generateShuffledBoard(configuration.boardDimensions);
-    });
+    const [board, setBoard] = React.useState<Board<Card | null>>(() => generateInitialBoard(configuration));
 
     // Informs this component that the user would like to perform a swap (i.e., they selected a second card).
     // Note that while the UI code ensures that a card is not swapped with itself, it does not ensure consistency

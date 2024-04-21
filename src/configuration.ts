@@ -1,8 +1,11 @@
-export interface Configuration {
-    boardDimensions: {
-        rows: number,
-        columns: number,
-    },
+import { BoardDimensions } from "./board"
 
-    seed: string | null,
+export interface Configuration {
+    boardGeneration: {
+        method: 'random',
+        dimensions: BoardDimensions,
+    } | {
+        method: 'seed',
+        seed: string,
+    }
 }

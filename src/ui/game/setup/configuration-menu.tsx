@@ -1,7 +1,8 @@
 import React from "react";
 import { Configuration } from "../../../configuration";
-import { buildIntegerRangeValidator, useValidatedNumberInput } from "./validated-input";
 import { LabeledRuler } from "../../common/labeled-ruler";
+import { getBoardOfSeed } from "./seed";
+import { buildIntegerRangeValidator, useValidatedNumberInput, useValidatedTextInput } from "./validated-input";
 
 import './configuration-menu.css';
 
@@ -40,6 +41,37 @@ export function useConfiguration(): [JSX.Element, Configuration | null] {
         placeholder: "from 1 to 13"
     });
 
+    const [seedElement, seed] = useValidatedTextInput({
+        validator: (input: string) => getBoardOfSeed(input) !== null,
+        hint: "3.10 0.0 0.1 ...",
+        placeholder: "3.10 0.0 0.1 ...",
+    });
+
+    const configuration = React.useMemo<Configuration | null>(() => {
+        if (rows !== null && columns !== null) {
+            return {
+                boardGeneration: {
+                    method: 'random',
+                    dimensions: {
+                        columns,
+                        rows,
+                    }
+                }
+            };
+        }
+
+        if (seed !== null) {
+            return {
+                boardGeneration: {
+                    method: 'seed',
+                    seed,
+                }
+            }
+        }
+
+        return null;
+    }, [rows, columns, seed]);
+
     const menuElement = <>
         <div className="option-group">
             <div className="option">
@@ -56,18 +88,12 @@ export function useConfiguration(): [JSX.Element, Configuration | null] {
 
             <div className="option">
                 <label htmlFor="seed">Seed</label>
-                <input placeholder={"3.10 0.0 0.1 ..."} type="text" />
+                {seedElement}
             </div>
         </div>
     </>;
 
-    return [menuElement, rows !== null && columns !== null ? {
-        boardDimensions: {
-            rows,
-            columns,
-        },
-        seed: null,
-    } : null];
+    return [menuElement, configuration];
 }
 
 
