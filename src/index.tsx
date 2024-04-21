@@ -18,14 +18,9 @@ root.render(
     <React.StrictMode>
         <WithSelector options={[
             {
-                label: "Configuration demo",
-                icon: 'icon-feather/settings',
-                content: () => <GameSession />
-            },
-            {
-                label: "Play yourself",
+                label: "Play",
                 icon: 'icon-feather/play',
-                content: () => <GameDemo />
+                content: () => <GameSession />
             }, {
                 label: "Solve with A*",
                 icon: 'icon-feather/star',

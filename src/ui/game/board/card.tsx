@@ -1,5 +1,5 @@
-import { Card } from "../../cards";
-import { getResourcePath } from "../resources";
+import { Card } from "../../../cards";
+import { getResourcePath } from "../../resources";
 
 import './card.css';
 

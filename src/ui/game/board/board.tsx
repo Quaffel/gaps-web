@@ -1,7 +1,6 @@
 import React from "react";
-import { Card } from "../../cards";
-import { Board, Row } from "../../board";
-import { CardPosition } from "../game";
+import { Card } from "../../../cards";
+import { Board, CardPosition, Row } from "../../../board";
 import { CardSpotState } from "./card";
 import { CardRow } from "./card-row";
 

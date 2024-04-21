@@ -1,4 +1,4 @@
-import { Card } from "../../cards";
+import { Card } from "../../../cards";
 import { CardSpotState, CardTile } from "./card";
 
 import './card-row.css'

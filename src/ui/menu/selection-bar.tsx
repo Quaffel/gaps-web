@@ -1,6 +1,6 @@
 import React from "react";
 import { SelectionContext } from "./selection";
-import { DecoratedButton } from "./decorated-button";
+import { DecoratedButton } from "../common/decorated-button";
 
 import './selection-bar.css';
 

@@ -1,10 +1,10 @@
 import React from "react";
-import { Card } from "../cards";
-import { Board } from "../board";
-import { ComponentType } from "../util/types";
-import { Highlight, HighlightedBoard } from "./board/board";
-import { Swap } from "./game";
-import { getResourcePath } from "./resources";
+import { Board } from "../../../board";
+import { Card } from "../../../cards";
+import { Move } from "../../../game";
+import { ComponentType } from "../../../util/types";
+import { getResourcePath } from "../../resources";
+import { Highlight, HighlightedBoard } from "./board";
 
 import './playback.css';
 
@@ -16,7 +16,7 @@ export function PlaybackBoard({
     displayedState
 }: {
     initialBoard: Board<Card | null>,
-    swaps: Array<Swap>,
+    swaps: Array<Move>,
     displayedState: DisplayState
 }) {
     if (typeof displayedState === 'number' && (displayedState < 0 || displayedState >= swaps.length))
@@ -24,7 +24,7 @@ export function PlaybackBoard({
 
     function getBoardAtSwap(
         initialBoard: Board<Card | null>,
-        swaps: Array<Swap>,
+        swaps: Array<Move>,
         displayedState: DisplayState,
     ): Board<Card | null> {
         const board = structuredClone(initialBoard);
@@ -55,7 +55,7 @@ export function PlaybackBoard({
     }
 
     function getHighlightsAtSwap(
-        swaps: Array<Swap>,
+        swaps: Array<Move>,
         displayedState: DisplayState,
     ): Array<Highlight> {
         if (displayedState === 'initial' || displayedState === 'final')

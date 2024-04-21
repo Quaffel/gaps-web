@@ -3,7 +3,7 @@ import { Board } from "../board";
 import { Card } from "../cards";
 import { Configuration } from "../configuration";
 import { GameDemo } from "../demo/game";
-import { ConfigurationMenu } from "./setup/configuration-menu";
+import { ConfigurationMenu } from "./game/setup/configuration-menu";
 
 import './session.css';
 
@@ -34,7 +34,7 @@ export function GameSession(): JSX.Element {
     if (currentState.name === 'configuration') {
         element = <ConfigurationMenu onConfigurationSubmission={launchGame} />;
     } else if (currentState.name === 'in-game') {
-        element = <GameDemo />
+        element = <GameDemo configuration={currentState.configuration} />
     } else {
         throw new Error("unreachable")
     }

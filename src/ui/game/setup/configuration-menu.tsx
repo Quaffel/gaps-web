@@ -1,7 +1,7 @@
 import React from "react";
-import { Configuration } from "../../configuration";
+import { Configuration } from "../../../configuration";
 import { buildIntegerRangeValidator, useValidatedNumberInput } from "./validated-input";
-import { LabeledRuler } from "./labeled-ruler";
+import { LabeledRuler } from "../../common/labeled-ruler";
 
 import './configuration-menu.css';
 

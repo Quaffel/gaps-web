@@ -1,7 +1,7 @@
-import { Card, RANKS, SUITS } from "../cards";
 import { Board } from "../board";
-import { Swap } from "../ui/game";
-import { GamePlayback } from "../ui/game-playback";
+import { Card, RANKS, SUITS } from "../cards";
+import { Move } from "../game";
+import { GamePlayback } from "../ui/game/integration/game-playback";
 
 // Same board as in './game.tsx'.
 const sampleInitialBoard: Board<Card | null> = SUITS.map(suit => RANKS.map(rank => ({
@@ -15,7 +15,7 @@ sampleInitialBoard[1][2] = null;
 // The navigation controls are completely provided by the used 'GamePlayback' component.
 // Please refer to its definition in case more fine-grained control is required.
 // Automatic playback is not yet implemented, which is why the 'play' button is always grayed out.
-const sampleSwaps: Array<Swap> = [
+const sampleSwaps: Array<Move> = [
     {
         from: {
             column: 1,

@@ -1,8 +1,8 @@
 import React from "react";
-import { Board } from "../board";
-import { Card } from "../cards";
-import { Swap } from "./game";
-import { DisplayState, PlaybackBoard, PlaybackControlsBar } from "./playback";
+import { Board } from "../../../board";
+import { Card } from "../../../cards";
+import { Move } from "../../../game";
+import { DisplayState, PlaybackBoard, PlaybackControlsBar } from "../board/playback";
 
 import './game-playback.css';
 
@@ -11,7 +11,7 @@ export function GamePlayback({
     swaps,
 }: {
     initialBoard: Board<Card | null>,
-    swaps: Array<Swap>,
+    swaps: Array<Move>,
 }): JSX.Element {
     const [currentDisplayState, setCurrentlyDisplayedState] = React.useState<DisplayState>('initial');
 
