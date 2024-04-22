@@ -2,7 +2,7 @@ import React from "react";
 import { Board } from "../board";
 import { Card } from "../cards";
 import { Configuration } from "../configuration";
-import { GameDemo } from "../demo/game";
+import { GameDemo } from "./game/integration/interactive-game";
 import { ConfigurationMenu } from "./game/setup/configuration-menu";
 
 import './session.css';

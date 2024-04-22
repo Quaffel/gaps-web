@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import { GameDemo } from './demo/game';
 import { PlaybackDemo } from './demo/playback';
 import { SelectionDisplay, WithSelector } from './ui/menu/selection';
 import { SelectionBar } from './ui/menu/selection-bar';

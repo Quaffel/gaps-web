@@ -1,12 +1,12 @@
 import React from "react";
-import { Board, withCardsSwapped } from "../board";
-import { Card } from "../cards";
-import { Configuration } from "../configuration";
-import { Move } from "../game";
-import { generateShuffledBoard } from "../logic/generation";
-import { solitaireGapsRules } from "../logic/rules";
-import { Game } from "../ui/game/integration/game";
-import { getBoardOfSeed } from "../ui/game/setup/seed";
+import { Board, withCardsSwapped } from "../../../board";
+import { Card } from "../../../cards";
+import { Configuration } from "../../../configuration";
+import { Move } from "../../../game";
+import { generateShuffledBoard } from "../../../logic/generation";
+import { solitaireGapsRules } from "../../../logic/rules";
+import { Game } from "./game";
+import { getBoardOfSeed } from "../setup/seed";
 
 function generateInitialBoard(configuration: Configuration): Board<Card | null> {
     switch (configuration.boardGeneration.method) {

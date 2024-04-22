@@ -4,7 +4,7 @@ import { Card } from "../../../cards";
 import { Move } from "../../../game";
 import { DisplayState, PlaybackBoard, PlaybackControlsBar } from "../board/playback";
 
-import './game-playback.css';
+import './playback-game.css';
 
 export function GamePlayback({
     initialBoard,

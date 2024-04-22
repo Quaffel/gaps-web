@@ -1,7 +1,7 @@
 import { Board } from "../board";
 import { Card, RANKS, SUITS } from "../cards";
 import { Move } from "../game";
-import { GamePlayback } from "../ui/game/integration/game-playback";
+import { GamePlayback } from "../ui/game/integration/playback-game";
 
 // Same board as in './game.tsx'.
 const sampleInitialBoard: Board<Card | null> = SUITS.map(suit => RANKS.map(rank => ({
