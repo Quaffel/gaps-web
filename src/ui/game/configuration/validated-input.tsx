@@ -51,11 +51,13 @@ export function useValidatedTextInput({
 
 export function useValidatedNumberInput({
     validator,
+    defaultValue,
     valueRange,
     hint,
     placeholder,
 }: {
     validator: Validator<number>,
+    defaultValue?: number,
     valueRange: { min: number, max: number }
     hint?: string,
     placeholder?: string,
@@ -63,7 +65,13 @@ export function useValidatedNumberInput({
     const [content, setContent] = React.useState<{
         text: string,
         validValueOrNull: number | null,
-    }>({ text: "", validValueOrNull: null });
+    }>(defaultValue === undefined ? {
+        text: "",
+        validValueOrNull: null,
+    } : {
+        text: defaultValue.toString(10),
+        validValueOrNull: defaultValue,
+    });
 
     const element = React.useRef<HTMLInputElement | null>(null)
 

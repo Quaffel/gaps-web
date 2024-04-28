@@ -2,7 +2,7 @@ import React from "react";
 import { Configuration } from "../../../configuration";
 import { LabeledRuler } from "../../common/labeled-ruler";
 import { getBoardOfSeed } from "./seed";
-import { buildIntegerRangeValidator, useValidatedNumberInput, useValidatedTextInput } from "./validated-input";
+import { buildIntegerRangeValidator, useValidatedNumberInput, useValidatedTextInput } from "../configuration/validated-input";
 
 import './configuration-menu.css';
 
@@ -22,7 +22,7 @@ export function ConfigurationMenu({
     return <div className="configuration-menu">
         {configElement}
 
-        <button disabled={config === null} onClick={() => handleSubmission()}>Submit</button>
+        <button disabled={config === null} onClick={handleSubmission}>Submit</button>
     </div>
 }
 
@@ -72,26 +72,28 @@ export function useConfiguration(): [JSX.Element, Configuration | null] {
         return null;
     }, [rows, columns, seed]);
 
-    const menuElement = <>
-        <div className="option-group">
-            <div className="option">
-                <label>Rows</label>
-                {rowsElement}
-            </div>
+    const menuElement = <div className="option-group flex-column">
+        <label>Random board generation</label>
 
-            <div className="option">
-                <label>Columns</label>
-                {columnsElement}
-            </div>
-
-            <LabeledRuler label="or" />
-
-            <div className="option">
-                <label htmlFor="seed">Seed</label>
-                {seedElement}
-            </div>
+        <div className="option">
+            <label>Rows</label>
+            {rowsElement}
         </div>
-    </>;
+
+        <div className="option">
+            <label>Columns</label>
+            {columnsElement}
+        </div>
+
+        <LabeledRuler label="or" />
+
+        <label>Load board from seed</label>
+
+        <div className="option">
+            <label htmlFor="seed">Seed</label>
+            {seedElement}
+        </div>
+    </div >;
 
     return [menuElement, configuration];
 }

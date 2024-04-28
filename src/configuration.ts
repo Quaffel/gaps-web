@@ -1,4 +1,7 @@
-import { BoardDimensions } from "./board"
+import { Board, BoardDimensions } from "./board"
+import { Card } from "./cards";
+import { generateShuffledBoard } from "./logic/generation";
+import { getBoardOfSeed } from "./ui/game/setup/seed";
 
 export interface Configuration {
     boardGeneration: {
@@ -7,5 +10,18 @@ export interface Configuration {
     } | {
         method: 'seed',
         seed: string,
+    }
+}
+
+export function deriveBoardFromConfiguration(configuration: Configuration): Board<Card | null> {
+    switch (configuration.boardGeneration.method) {
+        case 'random':
+            return generateShuffledBoard(configuration.boardGeneration.dimensions);
+        case 'seed':
+            const board = getBoardOfSeed(configuration.boardGeneration.seed);
+            if (board === null)
+                throw new Error("specified seed is invalid");
+
+            return board;
     }
 }
