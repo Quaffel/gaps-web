@@ -3,9 +3,9 @@ import { Board, withCardsSwapped } from "../../../board";
 import { Card } from "../../../cards";
 import { GameRules, Move } from "../../../game";
 import { solitaireGapsRules } from "../../../logic/rules";
-import { Game } from "../../game/integration/game";
-import { Pane } from "./common";
+import { InteractiveBoard } from "../../game/interactive-board";
 import { StatisticsBar } from "../../game/statistics-bar";
+import { Pane } from "./common";
 
 export interface InteractivePaneState {
     currentBoard: Board<Card | null>,
@@ -39,7 +39,7 @@ export function InteractiveGamePane({
 
     return <>
         <StatisticsBar statistics={statistics} />
-        <Game board={state.currentBoard} rules={solitaireGapsRules} onMove={handleMove} />
+        <InteractiveBoard board={state.currentBoard} rules={solitaireGapsRules} onMove={handleMove} />
     </>
 }
 

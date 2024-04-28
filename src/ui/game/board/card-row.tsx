@@ -14,6 +14,7 @@ export function CardRow({
 }): JSX.Element {
     return <div className="card-row">
         {cards.map((it, idx) => <CardTile
+            key={idx}
             spotState={it}
             onSelect={() => onCardSelect?.(it.card, idx)} />)}
     </div>

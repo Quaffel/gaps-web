@@ -1,8 +1,8 @@
 import { Board } from "../../../board";
 import { Card } from "../../../cards";
 import { interactiveGamePane } from "./interactive-game";
-import { astarGamePane } from "./solver/astar-game";
-import { mctsGamePane } from "./solver/mcts-game";
+import { astarGamePane } from "./astar-game";
+import { mctsGamePane } from "./mcts-game";
 
 export interface Pane<TState> {
     deriveBoard(state: TState): Board<Card | null>,

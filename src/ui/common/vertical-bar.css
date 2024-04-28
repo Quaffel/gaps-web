@@ -3,13 +3,14 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
 
     border-block: 1px solid black;
     padding-block: .5rem;
     box-sizing: border-box;
 
     & > label {
+        min-width: fit-content;
         font-size: 1.5rem;
         font-weight: bolder;
     }
@@ -19,7 +20,7 @@
     }
 }
 
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 1050px) {
     .vertical-bar {
         flex-direction: row;
     }

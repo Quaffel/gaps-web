@@ -1,7 +1,7 @@
-import { Board, BoardDimensions } from "./board"
-import { Card } from "./cards";
-import { generateShuffledBoard } from "./logic/generation";
-import { getBoardOfSeed } from "./ui/game/setup/seed";
+import { Board, BoardDimensions } from "../../../board"
+import { Card } from "../../../cards";
+import { generateShuffledBoard } from "../../../logic/generation";
+import { getBoardOfSeed } from "../../../seed";
 
 export interface Configuration {
     boardGeneration: {

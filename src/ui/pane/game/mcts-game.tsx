@@ -1,15 +1,16 @@
 import React from "react";
-import { Board } from "../../../../board";
-import { Card } from "../../../../cards";
-import { GameRules, Move } from "../../../../game";
-import { MCTS } from "../../../../logic/solver/mcts";
-import { Path } from "../../../../logic/solver/state";
-import { PlaybackBoard } from "../../../game/board/playback";
-import { GamePlaybackControls, PlaybackState, getBoardAtMove, getHighlightedMove } from "../../../game/integration/playback-game";
-import { Pane } from "../common";
-import { BoardNode } from "./node";
-import { Configuration } from "../../../game/automation/mcts/configuration";
-import { ConfigurationBar } from "../../../game/automation/mcts/configuration-bar";
+import { Board } from "../../../board";
+import { Card } from "../../../cards";
+import { GameRules, Move } from "../../../game";
+import { GapsBoardState } from "../../../logic/gaps-state";
+import { MCTS } from "../../../logic/solver/mcts";
+import { Path } from "../../../logic/solver/state";
+import { Configuration } from "../../configuration/mcts/configuration";
+import { ConfigurationBar } from "../../configuration/mcts/configuration-bar";
+import { PlaybackState, getBoardAtMove, getHighlightedMove } from "../../game/playback";
+import { PlaybackBoard } from "../../game/playback-board";
+import { GamePlaybackControls } from "../../game/playback-controls";
+import { Pane } from "./common";
 
 export interface MctsPaneState {
     initialBoard: Board<Card | null>,
@@ -33,10 +34,11 @@ export function MctsGamePane({
     async function handleConfigurationSubmission(configuration: Configuration) {
         setLoading(true);
 
-        // Yields to the event loop and causes React to re-render the component.
+        // Leave enough time to React to update the state.
+        // This does not guarantee a re-render before the calculation kicks off.
         // This is a hack. Ideally, we'd spawn a web worker for the calculation and use useEffect to
         // handle the communication with it.
-        await new Promise(resolve => setTimeout(resolve, 1));
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         const mcts = new MCTS.MCTSSearch<Board<Card | null>, Move>(state => rules.getScore(state.get()));
 
@@ -44,7 +46,7 @@ export function MctsGamePane({
         let board = state.initialBoard;
         for (let iteration = 0; iteration < configuration.maxIterations; iteration++) {
             const { done, element } = mcts.findNextMove(
-                new BoardNode(rules, board),
+                new GapsBoardState(rules, board),
                 configuration.maxDepth);
 
             board = element.state;
@@ -76,14 +78,12 @@ export function MctsGamePane({
     }, [state.moves, state.playbackState]);
 
     return <>
-        <ConfigurationBar onConfigurationSubmission={handleConfigurationSubmission} />
-        <div className="playback">
-            <PlaybackBoard board={playbackBoard.board} highlightedMove={playbackBoard.highlightedMove} />
-            <GamePlaybackControls
-                moves={state.moves ?? []}
-                playbackState={state.playbackState}
-                onPlaybackStateChange={handlePlaybackStateChange} />
-        </div>
+        <ConfigurationBar disabled={loading} onConfigurationSubmission={handleConfigurationSubmission} />
+        <PlaybackBoard board={playbackBoard.board} highlightedMove={playbackBoard.highlightedMove} />
+        <GamePlaybackControls
+            moves={state.moves ?? []}
+            playbackState={state.playbackState}
+            onPlaybackStateChange={handlePlaybackStateChange} />
     </>;
 }
 

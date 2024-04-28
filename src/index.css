@@ -6,7 +6,7 @@
 header {
     box-sizing: content-box;
     padding-inline: 2rem;
-    padding-block: 1rem;
+    padding-block: .5rem;
 
     position: relative;
 
@@ -76,7 +76,7 @@ code {
     flex-direction: column;
 }
 
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 1050px) {
     header {
         flex-direction: row;
     }

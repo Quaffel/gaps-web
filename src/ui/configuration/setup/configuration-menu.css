@@ -32,7 +32,7 @@ button {
 
     gap: 2rem;
 
-    max-width: 800px;
+    max-width: 1050px;
     width: 100%;
 }
 
@@ -43,7 +43,7 @@ button {
     }
 
     flex-grow: 1;
-    max-width: 800px;
+    max-width: 1050px;
 
     flex-direction: column;
 
@@ -51,7 +51,7 @@ button {
     gap: 1rem;
 }
 
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 1050px) {
     .option-group {
         flex-direction: row;
     }

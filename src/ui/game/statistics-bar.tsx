@@ -10,7 +10,7 @@ export function StatisticsBar({
     statistics: GameStatistics,
 }): JSX.Element {
     return <VerticalBar>
-        <label>Game statistics</label>
-        <span>Score: {statistics.score}</span>
+        <label>Play yourself</label>
+        <span>Score: {statistics.score.toFixed(2)}</span>
     </VerticalBar>;
 }

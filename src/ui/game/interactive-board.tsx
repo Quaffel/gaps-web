@@ -1,12 +1,10 @@
 import React from "react";
-import { CardPosition } from "../../../board";
-import { Card } from "../../../cards";
-import { GameRules, Move } from "../../../game";
-import { BoardState, Highlight, HighlightedBoard } from "../board/board";
+import { CardPosition } from "../../board";
+import { Card } from "../../cards";
+import { GameRules, Move } from "../../game";
+import { BoardState, Highlight, HighlightedBoard } from "./board/board";
 
-import './game.css';
-
-export function Game({
+export function InteractiveBoard({
     board,
     rules,
     onMove,

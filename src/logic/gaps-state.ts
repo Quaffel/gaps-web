@@ -1,10 +1,10 @@
-import { Board, boardsEqual, withCardsSwapped } from "../../../../board";
-import { Card } from "../../../../cards";
-import { GameRules, Move } from "../../../../game";
-import { State } from "../../../../logic/solver/state";
-import { getSeedOfBoard } from "../../../game/setup/seed";
+import { Board, boardsEqual, withCardsSwapped } from "../board";
+import { Card } from "../cards";
+import { GameRules, Move } from "../game";
+import { getSeedOfBoard } from "../seed";
+import { State } from "./solver/state";
 
-export class BoardNode implements State<Board<Card | null>, Move> {
+export class GapsBoardState implements State<Board<Card | null>, Move> {
     rules: GameRules;
     board: Board<Card | null>;
 
@@ -22,7 +22,7 @@ export class BoardNode implements State<Board<Card | null>, Move> {
     }
 
     withActionApplied(action: Move): State<Board<Card | null>, Move> {
-        return new BoardNode(this.rules, withCardsSwapped(this.board, action.from, action.to));
+        return new GapsBoardState(this.rules, withCardsSwapped(this.board, action.from, action.to));
     }
 
     isSolved(): boolean {

@@ -35,7 +35,7 @@ export function HighlightedBoard({
     state: BoardState,
     highlights: Array<Highlight>,
     onCardSelect?: (card: Card | null, row: number, column: number) => void
-    }): JSX.Element {
+}): JSX.Element {
     for (let it of highlights) {
         if (it.spot.row < 0 || it.spot.row >= state.length)
             throw new Error("highlight row idx is out of bounds");

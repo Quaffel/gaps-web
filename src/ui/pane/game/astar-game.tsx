@@ -1,16 +1,17 @@
 import React from "react";
-import { Board, getCellCount } from "../../../../board";
-import { Card } from "../../../../cards";
-import { GameRules, Move } from "../../../../game";
-import { findCorrectlyPlacedCards, findGaps, getStuckGaps, solitaireGapsRules } from "../../../../logic/rules";
-import { AStar } from "../../../../logic/solver/astar";
-import { State } from "../../../../logic/solver/state";
-import { Configuration } from "../../../game/automation/astar/configuration";
-import { ConfigurationBar } from "../../../game/automation/astar/configuration-bar";
-import { PlaybackBoard } from "../../../game/board/playback";
-import { GamePlaybackControls, PlaybackState, getBoardAtMove, getHighlightedMove } from "../../../game/integration/playback-game";
-import { Pane } from "../common";
-import { BoardNode } from "./node";
+import { Board, getCellCount } from "../../../board";
+import { Card } from "../../../cards";
+import { GameRules, Move } from "../../../game";
+import { findCorrectlyPlacedCards, findGaps, getStuckGaps } from "../../../logic/rules";
+import { AStar } from "../../../logic/solver/astar";
+import { State } from "../../../logic/solver/state";
+import { Configuration } from "../../configuration/astar/configuration";
+import { ConfigurationBar } from "../../configuration/astar/configuration-bar";
+import { PlaybackState, getBoardAtMove, getHighlightedMove } from "../../game/playback";
+import { PlaybackBoard } from "../../game/playback-board";
+import { GamePlaybackControls } from "../../game/playback-controls";
+import { Pane } from "./common";
+import { GapsBoardState } from "../../../logic/gaps-state";
 
 export interface AStarPaneState {
     initialBoard: Board<Card | null>,
@@ -34,10 +35,11 @@ export function AStarGamePane({
     async function handleConfigurationSubmission(configuration: Configuration) {
         setLoading(true);
 
-        // Yields to the event loop and causes React to re-render the component.
+        // Leave enough time to React to update the state.
+        // This does not guarantee a re-render before the calculation kicks off.
         // This is a hack. Ideally, we'd spawn a web worker for the calculation and use useEffect to
         // handle the communication with it.
-        await new Promise(resolve => setTimeout(resolve, 1));
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         const heuristicFn = (state: State<Board<Card | null>, Move>) => {
             const board: Board<Card | null> = state.get();
@@ -51,7 +53,7 @@ export function AStarGamePane({
         }
 
         const astar = new AStar.AStarSearch(
-            new BoardNode(rules, state.initialBoard),
+            new GapsBoardState(rules, state.initialBoard),
             configuration.maxOpenSetSize,
             heuristicFn);
         const path = astar.findPath();
@@ -77,14 +79,12 @@ export function AStarGamePane({
     }, [state.moves, state.playbackState]);
 
     return <>
-        <ConfigurationBar onConfigurationSubmission={handleConfigurationSubmission} />
-        <div className="playback">
-            <PlaybackBoard board={playbackBoard.board} highlightedMove={playbackBoard.highlightedMove} />
-            <GamePlaybackControls
-                moves={state.moves ?? []}
-                playbackState={state.playbackState}
-                onPlaybackStateChange={handlePlaybackStateChange} />
-        </div>
+        <ConfigurationBar disabled={loading} onConfigurationSubmission={handleConfigurationSubmission} />
+        <PlaybackBoard board={playbackBoard.board} highlightedMove={playbackBoard.highlightedMove} />
+        <GamePlaybackControls
+            moves={state.moves ?? []}
+            playbackState={state.playbackState}
+            onPlaybackStateChange={handlePlaybackStateChange} />
     </>;
 }
 

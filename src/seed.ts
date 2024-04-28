@@ -1,6 +1,6 @@
-import { Board, flatMapBoard, getColumnCount, getRowCount } from "../../../board";
-import { Card, RANKS, SUITS } from "../../../cards";
-import { generateSolvedBoard } from "../../../logic/generation";
+import { Board, flatMapBoard, getColumnCount, getRowCount } from "./board";
+import { Card, RANKS, SUITS } from "./cards";
+import { generateSolvedBoard } from "./logic/generation";
 
 export function getSeedOfBoard(board: Board<Card | null>): string {
     let seed = `${getRowCount(board)}.${getColumnCount(board)} `;

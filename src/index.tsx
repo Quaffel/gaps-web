@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import { Configuration, deriveBoardFromConfiguration } from './configuration';
+import { Configuration, deriveBoardFromConfiguration } from './ui/configuration/setup/configuration';
 import { solitaireGapsRules } from './logic/rules';
 import { SelectionBar } from './ui/menu/selection-bar';
-import { ConfigurationPane } from './ui/pane/configuration';
+import { ConfigurationPane } from './ui/pane/setup';
 import { Pane, PaneName, PaneState, gamePanes } from './ui/pane/game/common';
 import { InteractiveGamePane } from './ui/pane/game/interactive-game';
-import { AStarGamePane } from './ui/pane/game/solver/astar-game';
-import { MctsGamePane } from './ui/pane/game/solver/mcts-game';
+import { AStarGamePane } from './ui/pane/game/astar-game';
+import { MctsGamePane } from './ui/pane/game/mcts-game';
 import { getResourcePath } from './ui/resources';
 
 import './index.css';

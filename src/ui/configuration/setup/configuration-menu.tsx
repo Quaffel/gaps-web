@@ -1,8 +1,8 @@
 import React from "react";
-import { Configuration } from "../../../configuration";
+import { Configuration } from "./configuration";
 import { LabeledRuler } from "../../common/labeled-ruler";
-import { getBoardOfSeed } from "./seed";
-import { buildIntegerRangeValidator, useValidatedNumberInput, useValidatedTextInput } from "../configuration/validated-input";
+import { getBoardOfSeed } from "../../../seed";
+import { buildIntegerRangeValidator, useValidatedNumberInput, useValidatedTextInput } from "../common/validated-input";
 
 import './configuration-menu.css';
 
@@ -97,5 +97,3 @@ export function useConfiguration(): [JSX.Element, Configuration | null] {
 
     return [menuElement, configuration];
 }
-
-

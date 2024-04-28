@@ -1,54 +1,12 @@
-import { Board } from "../../../board";
-import { Card } from "../../../cards";
-import { Move } from "../../../game";
-import { MoveIndex, PlaybackControlsBar } from "../board/playback";
+import { Move } from "../../game";
+import { ComponentType } from "../../util/types";
+import { getResourcePath } from "../resources";
+import { MoveIndex, PlaybackState } from "./playback";
 
-import './playback-game.css';
+import './playback-controls.css';
 
-export interface PlaybackState {
-    moveIndex: MoveIndex,
-}
-
-export function getBoardAtMove(
-    initialBoard: Board<Card | null>,
-    swaps: Array<Move>,
-    playbackState: PlaybackState,
-): Board<Card | null> {
-    const moveIndex = playbackState.moveIndex;
-
-    const board = structuredClone(initialBoard);
-    if (moveIndex === 'initial') return board;
-
-    function performSwap(swapIdx: number) {
-        const swap = swaps[swapIdx];
-
-        const fromCard = board[swap.from.row][swap.from.column];
-        const toCard = board[swap.to.row][swap.to.column];
-
-        board[swap.from.row][swap.from.column] = toCard;
-        board[swap.to.row][swap.to.column] = fromCard;
-    }
-
-    const displayedSwapIdx = typeof moveIndex === 'number'
-        ? moveIndex
-        : (() => {
-            const _assertStateIsFinal: 'final' = moveIndex;
-            return swaps.length;
-        })();
-
-    for (let swapIdx = 0; swapIdx < displayedSwapIdx; swapIdx++) {
-        performSwap(swapIdx);
-    }
-
-    return board;
-}
-
-export function getHighlightedMove(moves: Array<Move>, playbackState: PlaybackState): Move | null {
-    const moveIndex = playbackState.moveIndex;
-
-    if (moveIndex === 'initial' || moveIndex === 'final') return null;
-    return moves[moveIndex];
-}
+const ActionValues = ['play', 'pause', 'fast-forward', 'rewind', 'skip-forward', 'skip-back'] as const;
+type Action = ComponentType<typeof ActionValues>;
 
 export function GamePlaybackControls({
     moves,
@@ -133,4 +91,29 @@ export function GamePlaybackControls({
             onAction: () => showLast()
         }
     ]} />;
+}
+
+interface PlaybackControl {
+    action: Action
+    enabled: boolean
+    onAction?: () => void
+}
+
+function PlaybackControlsBar({
+    controls
+}: {
+    controls: Array<PlaybackControl>
+}) {
+    function getActionIcon(action: Action): string {
+        return getResourcePath(`icon-feather/${action}`);
+    }
+
+    return <div className="playback-controls-bar">
+        {controls.map(it => <button
+            disabled={!it.enabled}
+            onClick={() => it.onAction?.()}
+            key={it.action}>
+            <img src={getActionIcon(it.action)} alt={it.action} />
+        </button>)}
+    </div>;
 }

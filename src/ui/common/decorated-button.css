@@ -1,13 +1,15 @@
 .decorated-button {
     width: clamp(max-content, 10vw, calc(max-content * 2));
     height: 5rem;
-    border-radius: .75rem;
-    border-width: 0;
-
     position: relative;
 
-    overflow: hidden;
+    box-sizing: border-box;
 
+    overflow: hidden;
+    min-width: fit-content;
+
+    border-radius: .75rem;
+    border-width: 0;
     background-color: unset;
     text-align: unset;
 
@@ -21,6 +23,7 @@
 
     & div {
         width: 100%;
+        min-width: max-content;
         height: 100%;
 
         padding: .5rem;

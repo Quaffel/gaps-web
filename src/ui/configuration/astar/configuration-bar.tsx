@@ -1,10 +1,12 @@
-import { VerticalBar } from "../../../common/vertical-bar";
-import { buildIntegerRangeValidator, useValidatedNumberInput } from "../../configuration/validated-input";
+import { VerticalBar } from "../../common/vertical-bar";
+import { buildIntegerRangeValidator, useValidatedNumberInput } from "../common/validated-input";
 import { Configuration } from "./configuration";
 
 export function ConfigurationBar({
+    disabled,
     onConfigurationSubmission,
 }: {
+    disabled?: boolean,
     onConfigurationSubmission(submission: Configuration): void,
 }): JSX.Element {
     const [configElement, config] = useAStarConfiguration();
@@ -17,7 +19,7 @@ export function ConfigurationBar({
     return <VerticalBar>
         <label>A* (A-Star)</label>
         {configElement}
-        <button disabled={config === null} onClick={handleSubmission}>Apply</button>
+        <button disabled={disabled || config === null} onClick={handleSubmission}>Apply</button>
     </VerticalBar>;
 }
 
