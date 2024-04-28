@@ -90,6 +90,7 @@ export function useValidatedNumberInput({
     }
 
     const inputElement = <input
+        value={content.text}
         placeholder={placeholder}
         type="number"
         ref={element}
