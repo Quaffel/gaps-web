@@ -3,12 +3,12 @@ import { Card, RANKS, getRankCardinality, getSuitCardinality } from "../cards";
 import { GameRules, Move } from "../game";
 
 
-function findGaps(board: Board<Card | null>, width: number = 1): Array<CardPosition> {
+export function findGaps(board: Board<Card | null>, width: number = 1): Array<CardPosition> {
     // TODO: Give helper functions more sensible names. 
     //       Present chain of filter and map does not make sense at first glance.
     let gaps = filterBoard(board, it => it === null).map(it => it.position);
 
-    for (let currentWidth = 1; currentWidth < width; currentWidth) {
+    for (let currentWidth = 1; currentWidth < width; currentWidth++) {
         gaps = gaps.filter(it => {
             const previousColumn = it.column - 1;
             if (previousColumn < 0) return false;
@@ -26,7 +26,7 @@ function findGaps(board: Board<Card | null>, width: number = 1): Array<CardPosit
  * in the row) but there is no card that can fill it (i.e., its predecessor is of the suit's highest rank).
  * it is not the last card in the row and the preceding card is of the suit's highest rank.
  */
-function getStuckGaps(board: Board<Card | null>): Array<CardPosition> {
+export function getStuckGaps(board: Board<Card | null>): Array<CardPosition> {
     return findGaps(board).filter(gap => {
         const previousColumn = gap.column - 1;
         if (previousColumn < 0) return false;
@@ -78,7 +78,7 @@ function findCandidateGapsFor(board: Board<Card | null>, cardPosition: CardPosit
  * @returns an approximate list of correctly placed cards.
  *  It is approximate in that it does not know which row will ultimately contain which suit.
  */
-function findCorrectlyPlacedCards(board: Board<Card | null>): Array<CardPosition> {
+export function findCorrectlyPlacedCards(board: Board<Card | null>): Array<CardPosition> {
     function isCardInCorrectColumn(card: Card | null, column: number): boolean {
         if (card === null) return column === getColumnCount(board) - 1;
 
@@ -126,11 +126,11 @@ function findCorrectlyPlacedCards(board: Board<Card | null>): Array<CardPosition
     return correctlyPlacedCards.flat();
 }
 
-function isSolved(board: Board<Card | null>): boolean {
+export function isSolved(board: Board<Card | null>): boolean {
     return findCorrectlyPlacedCards(board).length === getRowCount(board) * getColumnCount(board);
 }
 
-function getScore(board: Board<Card | null>): number {
+export function getScore(board: Board<Card | null>): number {
     if (isSolved(board)) {
         return 1;
     }
@@ -150,7 +150,7 @@ function getScore(board: Board<Card | null>): number {
     return metrics.reduce((acc, val, idx) => acc + val * weights[idx], 0) / weightsSum;
 }
 
-function getPossibleMoves(board: Board<Card | null>): Array<Move> {
+export function getPossibleMoves(board: Board<Card | null>): Array<Move> {
     // TODO: Try to use flatmap instead
     const moveableCards = board.reduce<Move[]>((acc, row, rowIdx) => {
         return row.reduce<Move[]>((acc, card, columnIdx) => {
