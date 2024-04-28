@@ -45,3 +45,14 @@ export interface Card {
     suit: Suit,
     rank: Rank,
 }
+
+export function cardsEqual(first: Card | null, second: Card | null): boolean {
+    if (first === null && second === null) {
+        return true;
+    }
+    if (first === null || second === null) {
+        return false;
+    }
+
+    return first.suit === second.suit && first.rank === second.rank;
+}

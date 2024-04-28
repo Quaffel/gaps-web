@@ -1,4 +1,4 @@
-import { Card } from "./cards";
+import { Card, cardsEqual } from "./cards";
 
 export type Row<T> = Array<T>;
 export type Board<T> = Array<Row<T>>
@@ -27,6 +27,34 @@ export function getRowCount(board: Board<Card | null>): number {
 
 export function getColumnCount(board: Board<Card | null>): number {
     return board[0].length;
+}
+
+export function getCellCount(board: Board<Card | null>): number {
+    return getRowCount(board) * getColumnCount(board);
+}
+
+export function boardsEqual(first: Board<Card | null>, second: Board<Card | null>): boolean {
+    const rowCount = getRowCount(first);
+    const columnCount = getColumnCount(first);
+
+    if (rowCount !== getRowCount(second) || columnCount !== getColumnCount(second)) {
+        return false;
+    }
+
+    for (let i = 0; i < rowCount; i++) {
+        for (let j = 0; j < columnCount; j++) {
+            const position = { row: i, column: j };
+
+            const firstCard = getCardAt(first, position);
+            const secondCard = getCardAt(second, position);
+
+            if (!cardsEqual(firstCard, secondCard)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 export function mapBoard<T>(

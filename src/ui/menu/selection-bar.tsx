@@ -1,25 +1,40 @@
-import React from "react";
-import { SelectionContext } from "./selection";
 import { DecoratedButton } from "../common/decorated-button";
+import { Resource } from "../resources";
 
 import './selection-bar.css';
 
-export function SelectionBar() {
-    const selectionContext = React.useContext(SelectionContext);
+interface Option<TName extends string> {
+    id: TName,
+    label: string,
+    icon: Resource,
+}
 
-    function selectOption(optionIdx: number): void {
-        if (selectionContext.selectedOptionIdx === optionIdx)
+export function SelectionBar<TOptions extends string>({
+    disabled,
+    options,
+    selectedOption,
+    onSelect,
+}: {
+    disabled?: boolean,
+    options: Array<Option<TOptions>>,
+    selectedOption: NoInfer<TOptions>,
+    onSelect(id: NoInfer<TOptions>): void,
+}) {
+    function selectOption(optionId: TOptions): void {
+        if (optionId === selectedOption)
             throw new Error("unreachable (button should not be active)");
 
-        console.log(`selected option @ idx ${optionIdx}`)
-        selectionContext.selectOption(optionIdx);
+        console.log(`selected option '${optionId}'`)
+        onSelect(optionId);
     }
 
     return <nav>
-        {selectionContext.options.map((option, optionIdx) => <DecoratedButton
+        {options.map((option, optionIdx) => <DecoratedButton
+            key={option.id}
             label={option.label}
             icon={option.icon}
-            disabled={optionIdx === selectionContext.selectedOptionIdx}
-            onSelect={() => selectOption(optionIdx)} />)}
+            disabled={disabled}
+            selected={option.id === selectedOption}
+            onSelect={() => selectOption(option.id)} />)}
     </nav>;
 }

@@ -7,6 +7,7 @@
     align-items: center;
 
     background: none;
+    box-sizing: border-box;
 }
 
 .card img {
@@ -17,11 +18,10 @@
 }
 
 .card.card-highlight-selection img {
-    box-shadow: rgba(245, 167, 72, 1) 2px 3px 10px;
     border: 2px rgba(245, 167, 72, 1) solid;
+    border-radius: 4px;
 }
 
 .card.card-highlight-swap-candidate img {
-    box-shadow: rgba(228, 23, 23, 1) 2px 3px 10px;
     border: 2px rgba(228, 23, 23, 1) solid;
 }

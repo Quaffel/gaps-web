@@ -8,77 +8,26 @@ import { Highlight, HighlightedBoard } from "./board";
 
 import './playback.css';
 
-export type DisplayState = 'initial' | 'final' | number;
+export type MoveIndex = 'initial' | 'final' | number;
 
 export function PlaybackBoard({
-    initialBoard,
-    swaps,
-    displayedState
+    board,
+    highlightedMove,
 }: {
-    initialBoard: Board<Card | null>,
-    swaps: Array<Move>,
-    displayedState: DisplayState
+    board: Board<Card | null>,
+    highlightedMove: Move | null,
 }) {
-    if (typeof displayedState === 'number' && (displayedState < 0 || displayedState >= swaps.length))
-        throw new Error("displayed swap index is out of bounds");
-
-    function getBoardAtSwap(
-        initialBoard: Board<Card | null>,
-        swaps: Array<Move>,
-        displayedState: DisplayState,
-    ): Board<Card | null> {
-        const board = structuredClone(initialBoard);
-        if (displayedState === 'initial') return board;
-
-        function performSwap(swapIdx: number) {
-            const swap = swaps[swapIdx];
-
-            const fromCard = board[swap.from.row][swap.from.column];
-            const toCard = board[swap.to.row][swap.to.column];
-
-            board[swap.from.row][swap.from.column] = toCard;
-            board[swap.to.row][swap.to.column] = fromCard;
-        }
-
-        const displayedSwapIdx = typeof displayedState === 'number'
-            ? displayedState
-            : (() => {
-                const _assertStateIsFinal: 'final' = displayedState;
-                return swaps.length;
-            })();
-
-        for (let swapIdx = 0; swapIdx < displayedSwapIdx; swapIdx++) {
-            performSwap(swapIdx);
-        }
-
-        return board;
-    }
-
-    function getHighlightsAtSwap(
-        swaps: Array<Move>,
-        displayedState: DisplayState,
-    ): Array<Highlight> {
-        if (displayedState === 'initial' || displayedState === 'final')
-            return [];
-
-        const swap = swaps[displayedState];
+    const highlights = React.useMemo<Array<Highlight>>(() => {
+        if (highlightedMove === null) return [];
 
         return [{
-            spot: swap.from,
+            spot: highlightedMove.from,
             highlight: 'selection',
         }, {
-            spot: swap.to,
+            spot: highlightedMove.to,
             highlight: 'swap-candidate',
         }];
-    }
-
-    const board = React.useMemo(() => {
-        return getBoardAtSwap(initialBoard, swaps, displayedState);
-    }, [initialBoard, swaps, displayedState]);
-
-    const highlights = React.useMemo(() => {
-        return getHighlightsAtSwap(swaps, displayedState);
-    }, [swaps, displayedState]);
+    }, [highlightedMove]);
 
     return <HighlightedBoard
         state={board}
@@ -106,10 +55,11 @@ export function PlaybackControlsBar({
     }
 
     return <div className="playback-controls-bar">
-        {controls.map(it => {
-            return <button disabled={!it.enabled} onClick={() => it.onAction?.()}>
-                <img src={getActionIcon(it.action)} alt={it.action} />
-            </button>;
-        })}
-    </div>
+        {controls.map(it => <button
+            disabled={!it.enabled}
+            onClick={() => it.onAction?.()}
+            key={it.action}>
+            <img src={getActionIcon(it.action)} alt={it.action} />
+        </button>)}
+    </div>;
 }
