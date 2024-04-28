@@ -1,7 +1,7 @@
 import { Rank, Suit } from "../cards";
 import { ComponentType } from "../util/types";
 
-type CardResource = `cards/${Rank}_of_${Suit}` | 'cards/back';
+type CardResource = `cards/${Rank}_of_${Suit}` | 'cards/back' | 'cards-custom/gap';
 
 namespace FeatherIcons {
     export const VariantValues = [

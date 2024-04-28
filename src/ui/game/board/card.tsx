@@ -24,7 +24,7 @@ export function CardTile({
     onSelect?: () => void
 }): JSX.Element {
     function getCardResource(card: Card | null): string {
-        const cardPath = card === null ? 'cards/back' as const : `cards/${card.rank}_of_${card.suit}` as const;
+        const cardPath = card === null ? 'cards-custom/gap' as const : `cards/${card.rank}_of_${card.suit}` as const;
         return getResourcePath(cardPath);
     }
 
