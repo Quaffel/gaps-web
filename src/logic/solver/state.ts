@@ -1,3 +1,10 @@
+export interface ActionPathElement<TState, TAction> {
+    state: TState,
+    action: TAction,
+}
+
+export type Path<TState, TAction> = Array<ActionPathElement<TState, TAction>>;
+
 export interface State<TState, TAction> {
     get(): TState;
 

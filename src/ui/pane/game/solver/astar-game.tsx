@@ -1,16 +1,16 @@
 import React from "react";
-import { Board, boardsEqual, getCellCount, withCardsSwapped } from "../../../board";
-import { Card } from "../../../cards";
-import { GameRules, Move } from "../../../game";
-import { Configuration } from "../../game/automation/astar/configuration";
-import { ConfigurationBar } from "../../game/automation/astar/configuration-bar";
-import { Pane } from "./common";
-import { AStar } from "../../../logic/astar/astar";
-import { State } from "../../../logic/astar/state";
-import { findCorrectlyPlacedCards, findGaps, getStuckGaps, solitaireGapsRules } from "../../../logic/rules";
-import { getSeedOfBoard } from "../../game/setup/seed";
-import { GamePlaybackControls, PlaybackState, getBoardAtMove, getHighlightedMove } from "../../game/integration/playback-game";
-import { PlaybackBoard } from "../../game/board/playback";
+import { Board, getCellCount } from "../../../../board";
+import { Card } from "../../../../cards";
+import { GameRules, Move } from "../../../../game";
+import { findCorrectlyPlacedCards, findGaps, getStuckGaps, solitaireGapsRules } from "../../../../logic/rules";
+import { AStar } from "../../../../logic/solver/astar";
+import { State } from "../../../../logic/solver/state";
+import { Configuration } from "../../../game/automation/astar/configuration";
+import { ConfigurationBar } from "../../../game/automation/astar/configuration-bar";
+import { PlaybackBoard } from "../../../game/board/playback";
+import { GamePlaybackControls, PlaybackState, getBoardAtMove, getHighlightedMove } from "../../../game/integration/playback-game";
+import { Pane } from "../common";
+import { BoardNode } from "./node";
 
 export interface AStarPaneState {
     initialBoard: Board<Card | null>,
@@ -18,49 +18,12 @@ export interface AStarPaneState {
     playbackState: PlaybackState,
 }
 
-class BoardNode implements State<Board<Card | null>, Move> {
-    rules: GameRules;
-    board: Board<Card | null>;
-
-    constructor(rules: GameRules, board: Board<Card | null>) {
-        this.rules = rules;
-        this.board = board;
-    }
-
-    get(): Board<Card | null> {
-        return this.board;
-    }
-
-    getPossibleActions(): Move[] {
-        return this.rules.getPossibleMoves(this.board);
-    }
-
-    withActionApplied(action: Move): State<Board<Card | null>, Move> {
-        return new BoardNode(this.rules, withCardsSwapped(this.board, action.from, action.to));
-    }
-
-    isSolved(): boolean {
-        return this.rules.isSolved(this.board);
-    }
-
-    getScore(): number {
-        return this.rules.getScore(this.board);
-    }
-
-    equals(other: State<Board<Card | null>, Move>): boolean {
-        return boardsEqual(this.get(), other.get());
-    }
-
-    hash(): string {
-        // TODO: Use more lightweight hash
-        return getSeedOfBoard(this.board);
-    }
-}
-
 export function AStarGamePane({
+    rules,
     state,
     onStateChange,
 }: {
+    rules: GameRules,
     state: AStarPaneState,
     onStateChange: (state: AStarPaneState) => void,
 }): JSX.Element {
@@ -87,7 +50,10 @@ export function AStarGamePane({
             return functions.reduce((acc, val, idx) => acc + val * weights[idx], 0);
         }
 
-        const astar = new AStar.AStarSearch(new BoardNode(solitaireGapsRules, state.initialBoard), configuration.iterations, heuristicFn);
+        const astar = new AStar.AStarSearch(
+            new BoardNode(rules, state.initialBoard),
+            configuration.maxOpenSetSize,
+            heuristicFn);
         const path = astar.findPath();
 
         console.log("path:", path);

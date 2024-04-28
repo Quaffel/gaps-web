@@ -1,7 +1,8 @@
-.configuration-bar {
+.vertical-bar {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    align-items: center;
     gap: 2rem;
 
     border-block: 1px solid black;
@@ -13,17 +14,13 @@
         font-weight: bolder;
     }
 
-    & > div > label {
-        margin-right: 2rem;
-    }
-
-    & > div > input {
+    & input {
         flex-grow: 1;
     }
 }
 
 @media screen and (min-width: 800px) {
-    .configuration-bar {
+    .vertical-bar {
         flex-direction: row;
     }
 }

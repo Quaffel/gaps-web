@@ -2,11 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { Configuration, deriveBoardFromConfiguration } from './configuration';
+import { solitaireGapsRules } from './logic/rules';
 import { SelectionBar } from './ui/menu/selection-bar';
 import { ConfigurationPane } from './ui/pane/configuration';
-import { AStarGamePane } from './ui/pane/game/astar-game';
 import { Pane, PaneName, PaneState, gamePanes } from './ui/pane/game/common';
 import { InteractiveGamePane } from './ui/pane/game/interactive-game';
+import { AStarGamePane } from './ui/pane/game/solver/astar-game';
+import { MctsGamePane } from './ui/pane/game/solver/mcts-game';
 import { getResourcePath } from './ui/resources';
 
 import './index.css';
@@ -68,6 +70,10 @@ function App(): JSX.Element {
                     id: 'astar',
                     label: "Solve with A*",
                     icon: 'icon-feather/star',
+                }, {
+                    id: 'mcts',
+                    label: "Solve with MCTS",
+                    icon: 'icon-feather/git-merge',
                 }]}
                 selectedOption={display}
                 onSelect={handleDisplaySelection}
@@ -122,6 +128,7 @@ function GameSession({
         switch (display) {
             case 'interactive':
                 return <InteractiveGamePane
+                    rules={solitaireGapsRules}
                     state={state as PaneState<'interactive'>}
                     onStateChange={state => {
                         const interactiveSession: Session<'interactive'> = { display, state };
@@ -129,9 +136,18 @@ function GameSession({
                     }} />
             case 'astar':
                 return <AStarGamePane
+                    rules={solitaireGapsRules}
                     state={state}
                     onStateChange={state => {
                         const interactiveSession: Session<'astar'> = { display, state };
+                        setSession(interactiveSession);
+                    }} />
+            case 'mcts':
+                return <MctsGamePane
+                    rules={solitaireGapsRules}
+                    state={state}
+                    onStateChange={state => {
+                        const interactiveSession: Session<'mcts'> = { display, state };
                         setSession(interactiveSession);
                     }} />
         }

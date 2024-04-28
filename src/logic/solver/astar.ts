@@ -1,9 +1,4 @@
-import { State } from "./state";
-
-type Path<TState, TAction> = Array<{
-    action: TAction,
-    state: TState,
-}>
+import { Path, State } from "./state";
 
 export namespace AStar {
     class Node<TState, TAction> {
@@ -79,7 +74,7 @@ export namespace AStar {
                     if (this._closedSet.has(hash)) {
                         return; // Skip expansion if the new state is already in closedSet
                     }
-                    
+
                     let newG = currentNode.g + 1;
                     let newH = this._heuristicFn(newState);
                     let newNode = new Node(newState, currentNode, action, newG, newH, currentNode.depth + 1);

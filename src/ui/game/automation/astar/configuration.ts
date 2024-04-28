@@ -1,3 +1,3 @@
 export interface Configuration {
-    iterations: number,
+    maxOpenSetSize: number,
 }

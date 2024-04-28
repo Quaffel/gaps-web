@@ -7,7 +7,7 @@ export function ConfigurationBar({
 }: {
     onConfigurationSubmission(submission: Configuration): void,
 }): JSX.Element {
-    const [configElement, config] = useAStarConfiguration();
+    const [configElement, config] = useMctsConfiguration();
 
     function handleSubmission() {
         if (config === null) throw new Error("unreachable (button should not be active)");
@@ -15,16 +15,26 @@ export function ConfigurationBar({
     }
 
     return <VerticalBar>
-        <label>A* (A-Star)</label>
+        <label>Monte-Carlo Tree Search</label>
         {configElement}
         <button disabled={config === null} onClick={handleSubmission}>Apply</button>
     </VerticalBar>;
 }
 
-function useAStarConfiguration(): [JSX.Element, Configuration | null] {
-    const [setSizeElement, maxOpenSetSize] = useValidatedNumberInput({
+function useMctsConfiguration(): [JSX.Element, Configuration | null] {
+    const [iterationsElement, maxIterations] = useValidatedNumberInput({
         validator: buildIntegerRangeValidator({ min: 1, max: 1_000_000 }),
-        hint: "maximum open set size",
+        hint: "max iterations",
+        defaultValue: 10_000,
+        valueRange: {
+            min: 1,
+            max: 1_000_000,
+        }
+    });
+
+    const [depthElement, maxDepth] = useValidatedNumberInput({
+        validator: buildIntegerRangeValidator({ min: 1, max: 1_000_000 }),
+        hint: "max depth",
         defaultValue: 10_000,
         valueRange: {
             min: 1,
@@ -33,12 +43,14 @@ function useAStarConfiguration(): [JSX.Element, Configuration | null] {
     });
 
     const configElement = <div className="option flex-row">
-        <label>Maximum open set size</label>
-        {setSizeElement}
+        <label>Iterations</label>
+        {iterationsElement}
+        <label>Depth</label>
+        {depthElement}
     </div>;
 
-    const config: Configuration | null = maxOpenSetSize !== null
-        ? { maxOpenSetSize }
+    const config: Configuration | null = maxIterations !== null && maxDepth !== null
+        ? { maxIterations, maxDepth }
         : null;
 
     return [configElement, config];

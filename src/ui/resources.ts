@@ -13,6 +13,7 @@ namespace FeatherIcons {
         'refresh',
         'share',
         'settings',
+        'git-merge',
     ] as const;
 
     export type Variants = ComponentType<typeof VariantValues>;
