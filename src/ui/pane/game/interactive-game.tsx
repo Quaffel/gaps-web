@@ -1,18 +1,22 @@
+import React from "react";
 import { Board, withCardsSwapped } from "../../../board";
 import { Card } from "../../../cards";
-import { Move } from "../../../game";
+import { GameRules, Move } from "../../../game";
 import { solitaireGapsRules } from "../../../logic/rules";
 import { Game } from "../../game/integration/game";
 import { Pane } from "./common";
+import { StatisticsBar } from "../../game/statistics-bar";
 
 export interface InteractivePaneState {
     currentBoard: Board<Card | null>,
 }
 
 export function InteractiveGamePane({
+    rules,
     state,
     onStateChange,
 }: {
+    rules: GameRules,
     state: InteractivePaneState,
     onStateChange: (state: InteractivePaneState) => void,
 }) {
@@ -27,7 +31,16 @@ export function InteractiveGamePane({
         });
     }
 
-    return <Game board={state.currentBoard} rules={solitaireGapsRules} onMove={handleMove} />
+    const statistics = React.useMemo(() => {
+        return {
+            score: rules.getScore(state.currentBoard),
+        }
+    }, [state.currentBoard]);
+
+    return <>
+        <StatisticsBar statistics={statistics} />
+        <Game board={state.currentBoard} rules={solitaireGapsRules} onMove={handleMove} />
+    </>
 }
 
 function buildDefaultState(initialBoard: Board<Card | null>): InteractivePaneState {
