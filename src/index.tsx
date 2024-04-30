@@ -99,7 +99,7 @@ function Index() {
             const board = bs as BoardState;
             const functions = [
                 board.getSize() - board.getWellPlacedCards().length,
-                board.getStuckGaps().length,
+                board.getDeadGaps().length,
                 board.getDoubleGaps().length,
             ]
             const weights = [3, 5, 1];

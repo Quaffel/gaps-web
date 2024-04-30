@@ -302,7 +302,7 @@ export class BoardState implements State<Move> {
         return this.filter(card => card === null).map(({ position }) => position);
     }
 
-    getStuckGaps(): CardPosition[] {
+    getDeadGaps(): CardPosition[] {
         if (this._stuckGaps !== null) {
             return this._stuckGaps;
         }
@@ -463,7 +463,7 @@ export class BoardState implements State<Move> {
         const size = this.getRows() * this.getColumns();
         const functions = [
             this.getWellPlacedCards().length / size,
-            (4 - this.getStuckGaps().length) / 4,
+            (4 - this.getDeadGaps().length) / 4,
             (3 - this.getDoubleGaps().length) / 3,
             (this.getPossibleActions().length / size),
         ]
