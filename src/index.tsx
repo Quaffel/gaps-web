@@ -52,7 +52,7 @@ function Index() {
     const [verifyValidMove, setVerifyValidMove] = React.useState<boolean>(Boolean(loadedVerifyValidMove));
     const [seed, setSeed] = React.useState(board.getSeed());
     const [loading, setLoading] = React.useState(false);
-    const [missPlacedCardsCount, setMissPlacedCardsCount] = React.useState(0);
+    const [wellPlacedCardsCount, setWellPlacedCardsCount] = React.useState(0);
     const [maxDepth, setMaxDepth] = React.useState(Number(loadedMaxDepth));
     const [animationDelay, setAnimationDelay] = React.useState(Number(loadedAnimationDelay));
     const [score, setScore] = React.useState(0);
@@ -65,7 +65,7 @@ function Index() {
             const size = board.getSize();
             setState([...board.getState()]);
             setScore(board.getScore());
-            setMissPlacedCardsCount(size - board.getWellPlacedCards().length);
+            setWellPlacedCardsCount(board.getWellPlacedCards().length);
             const seed = board.getSeed();
             localStorage.setItem("seed", seed);
             setSeed(board.getSeed());
@@ -76,7 +76,7 @@ function Index() {
 
         const size = board.getSize();
         resetHand();
-        setMissPlacedCardsCount(size - board.getWellPlacedCards().length);
+        setWellPlacedCardsCount(board.getWellPlacedCards().length);
         setScore(board.getScore());
         setSeed(board.getSeed());
         document.getElementById("rows")!.setAttribute("value", String(board.getRows()));
@@ -269,8 +269,8 @@ function Index() {
                         <div>{seed}</div>
                     </div>
                     <div>
-                        <div className="bold">Miss placed cards</div>
-                        <div>{missPlacedCardsCount - rows}</div>
+                        <div className="bold">Well placed cards</div>
+                        <div>{wellPlacedCardsCount}</div>
                     </div>
                     <div>
                         <div className="bold">Score</div>
