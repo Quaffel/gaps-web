@@ -62,7 +62,7 @@ function Index() {
         board.onUpdate = () => {
             const rows = board.getRows();
             const columns = board.getColumns();
-            const size = board.getSize();
+            // const size = board.getSize();
             setState([...board.getState()]);
             setScore(board.getScore());
             setWellPlacedCardsCount(board.getWellPlacedCards().length);
@@ -74,7 +74,7 @@ function Index() {
             resetHand();
         };
 
-        const size = board.getSize();
+        // const size = board.getSize();
         resetHand();
         setWellPlacedCardsCount(board.getWellPlacedCards().length);
         setScore(board.getScore());
