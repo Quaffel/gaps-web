@@ -2,7 +2,6 @@ import { Rank, Ranks } from './Rank';
 import { Suit, Suits } from './Suit';
 import { CardPosition, Card, Move } from './Card';
 import { State } from "./State";
-import { verify } from "crypto";
 
 export class BoardState implements State<Move> {
     private _state: (Card | null)[][];
@@ -213,8 +212,8 @@ export class BoardState implements State<Move> {
         this.reset(this.getRows(), this.getColumns());
         this.removeHighestCards();
         for (let i = 0; i < n; i++) {
-            const gapsPositions = this.filter((card, cardPosition) => card == null);
-            const nonGapCardsPositions = this.filter((card, cardPosition) => card != null);
+            const gapsPositions = this.filter((card) => card == null);
+            const nonGapCardsPositions = this.filter((card) => card != null);
             if (gapsPositions.length <= 0) break;
             const pickedGapIndex = Math.floor(Math.random() * gapsPositions.length);
             const pickedCardIndex = Math.floor(Math.random() * nonGapCardsPositions.length);
@@ -395,14 +394,17 @@ export class BoardState implements State<Move> {
             }, Array(this.getRows()+1).fill([]));
 
             const lengths = resRow.map(arr => arr.length);
-            const argMax = lengths.reduce((acc, val, idx) => {
-                if (val > lengths[acc]) {
-                    return idx;
+            const max = Math.max(...lengths)
+            const indicesMax = lengths.reduce<number[]>((acc, val, idx) => {
+                if (val === max) {
+                    return [idx];
                 }
                 return acc;
-            }, 0);
+            }, [])
 
-            acc[argMax] = resRow[argMax];
+            for (const item of indicesMax) {
+                acc[item] = [...acc[item], ...resRow[item]]
+            }
 
             return acc;
         }, Array(this.getRows()+1).fill([]));
