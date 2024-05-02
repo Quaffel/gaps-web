@@ -2,6 +2,7 @@ import { Rank, Ranks } from './Rank';
 import { Suit, Suits } from './Suit';
 import { CardPosition, Card, Move } from './Card';
 import { State } from "./State";
+import { verify } from "crypto";
 
 export class BoardState implements State<Move> {
     private _state: (Card | null)[][];
@@ -100,7 +101,7 @@ export class BoardState implements State<Move> {
 
     isSolved(): boolean {
         const wellPlacedCards = this.getWellPlacedCards();
-        return wellPlacedCards.length === this.getRows() * this.getColumns();
+        return wellPlacedCards.length + this.getRows() === this.getRows() * this.getColumns();
     }
 
     isTerminal(): boolean {
@@ -205,6 +206,25 @@ export class BoardState implements State<Move> {
                 let randRow = Math.floor(Math.random() * this.getRows());
                 this.swap({ row: j, column: i }, { row: randRow, column: randColumn });
             }
+        }
+    }
+
+    shuffleSequentially(n: number) {
+        this.reset(this.getRows(), this.getColumns());
+        this.removeHighestCards();
+        for (let i = 0; i < n; i++) {
+            const gapsPositions = this.filter((card, cardPosition) => card == null);
+            const nonGapCardsPositions = this.filter((card, cardPosition) => card != null);
+            if (gapsPositions.length <= 0) break;
+            const pickedGapIndex = Math.floor(Math.random() * gapsPositions.length);
+            const pickedCardIndex = Math.floor(Math.random() * nonGapCardsPositions.length);
+            const selectedGap = gapsPositions[pickedGapIndex];
+            const selectedCard = nonGapCardsPositions[pickedCardIndex];
+            const move: Move = {
+                from: selectedCard.position,
+                to: selectedGap.position
+            }
+            this.requestAction(move, false);
         }
     }
 
@@ -382,10 +402,11 @@ export class BoardState implements State<Move> {
                 return acc;
             }, 0);
 
-            acc[argMax] = resRow.flat();
+            acc[argMax] = resRow[argMax];
 
             return acc;
         }, Array(this.getRows()+1).fill([]));
+
         this._wellPlacedCards = res.flat();
         return this._wellPlacedCards;
     }
@@ -462,7 +483,7 @@ export class BoardState implements State<Move> {
 
         const size = this.getRows() * this.getColumns();
         const functions = [
-            this.getWellPlacedCards().length / size,
+            (this.getWellPlacedCards().length + this.getRows()) / size,
             (4 - this.getDeadGaps().length) / 4,
             (3 - this.getDoubleGaps().length) / 3,
             (this.getPossibleActions().length / size),

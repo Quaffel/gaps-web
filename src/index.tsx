@@ -151,6 +151,10 @@ function Index() {
         board.shuffle();
     }
 
+    function shuffleSolvableBoard() {
+        board.shuffleSequentially(25);
+    }
+
     function performMove(from: CardPosition, to: CardPosition) {
         board.requestAction({from, to}, verifyValidMove);
     }
@@ -266,7 +270,7 @@ function Index() {
                     </div>
                     <div>
                         <div className="bold">Miss placed cards</div>
-                        <div>{missPlacedCardsCount}</div>
+                        <div>{missPlacedCardsCount - rows}</div>
                     </div>
                     <div>
                         <div className="bold">Score</div>
@@ -277,6 +281,7 @@ function Index() {
                 <div className="form-group flex-row gap-2">
                     <button disabled={loading} onClick={() => initializeBoard()}>Reset</button>
                     <button disabled={loading} onClick={shuffleBoard}>Shuffle</button>
+                    <button disabled={loading} onClick={shuffleSolvableBoard}>Shuffle with solvability guarantee</button>
                     <button disabled={loading} onClick={performAStar}>A*</button>
                     <button disabled={loading} onClick={performMCTS}>MCTS</button>
                     <button disabled={loading} onClick={() => console.log(board.getChildren())}>Console log children</button>
