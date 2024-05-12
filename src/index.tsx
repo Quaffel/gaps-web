@@ -57,6 +57,7 @@ function Index() {
     const [animationDelay, setAnimationDelay] = React.useState(Number(loadedAnimationDelay));
     const [score, setScore] = React.useState(0);
     const [showHighlight, setShowHighlight] = React.useState(Boolean(loadedShowHighlight));
+    const [elapsedTime, setElapsedTime] = React.useState(0);
 
     React.useEffect(() => {
         board.onUpdate = () => {
@@ -107,7 +108,12 @@ function Index() {
         }
 
         const astar = new AStar.AStarSearch(board, maxDepth, heuristicFn);
+
+        setElapsedTime(0);
+        const startTime = new Date().getTime();
         const path = astar.findPath();
+        const endTime = new Date().getTime();
+        setElapsedTime((endTime - startTime) / 1000);
 
         if (path === null) {
             console.log("No solution found");
@@ -132,12 +138,16 @@ function Index() {
 
         const mcts = new MCTS.MCTSSearch(board);
 
+        setElapsedTime(0);
+        const startTime = new Date().getTime();
         let nextMove = board;
         while (board.isTerminal() === false) {
             nextMove = await mcts.findNextMove(board, maxDepth) as BoardState;
             board.load(nextMove);
             await wait(animationDelay);
         }
+        const endTime = new Date().getTime();
+        setElapsedTime((endTime - startTime) / 1000);
 
         setLoading(false);
     }
@@ -248,6 +258,12 @@ function Index() {
         localStorage.setItem("verifyValidMove", String(e.target.checked));
     }
 
+    function getElapsedTime() {
+        const minutes = Math.floor(elapsedTime / 60);
+        const seconds = elapsedTime % 60;
+        return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    }
+
     return (
         <div className="py-3">
             <Board
@@ -275,6 +291,10 @@ function Index() {
                     <div>
                         <div className="bold">Score</div>
                         <div>{score.toFixed(2)}</div>
+                    </div>
+                    <div>
+                        <div className="bold">Elapsed time (minutes:seconds.milliseconds)</div>
+                        <div>{getElapsedTime()}</div>
                     </div>
                 </div>
 
